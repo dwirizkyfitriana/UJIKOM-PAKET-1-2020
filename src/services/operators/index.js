@@ -7,6 +7,8 @@ class Operators {
       let q = new Parse.Query(Tb)
 
       q.equalTo('type', 'operator')
+      q.equalTo('status', 1)
+      q.doesNotExist('deletedAt')
       q.find().then(
         (res) => {
           resolve(JSON.parse(JSON.stringify(res)))
@@ -28,15 +30,63 @@ class Operators {
       user.set('email', data.email)
       user.set('type', 'operator')
 
-      user.signUp().then((res) => {
+      user.signUp().then(
+        (res) => {
           console.log('new operator', res)
           resolve(res)
-      }, (err) => {
+        },
+        (err) => {
           reject(err)
-      })
-
+        }
+      )
     })
   }
+
+  static async updateOperator(id, data) {
+    return new Promise((resolve, reject) => {
+      const User = new Parse.Object.extend('User')
+      let q = new Parse.Query(User)
+
+      q.get(id).then(
+        (res) => {
+          res.set('name', data.name)
+          res.set('username', data.username)
+          res.set('password', data.password)
+          res.set('email', data.email)
+          res.set('type', 'operator')
+          console.log('new operator', res)
+          
+          res.save(null, {useMasterKey : true}).then((r) => {
+            resolve(r)
+          }, (err) => reject(err))
+        },
+        (err) => {
+          reject(err)
+        }
+      )
+    })
+  }
+
+  static async deleteOperators(id) {
+    return new Promise((resolve, reject) => {
+      const Tb = Parse.Object.extend('User')
+      let q = new Parse.Query(Tb)
+
+      q.get(id).then(
+        (res) => {
+          res.set('status', 500)
+          res.set('deletedAt', new Date())
+          res.save(null, {useMasterKey : true}).then((r) => {
+            resolve(r)
+          }, (err) => reject(err))
+        },
+        (err) => {
+          reject(err)
+        }
+      )
+    })
+  }
+
 }
 
 export default Operators
