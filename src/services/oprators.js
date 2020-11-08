@@ -1,4 +1,4 @@
-import { Parse } from '../parseConfig'
+import { Parse } from './parseConfig'
 
 class Operators {
   static async getAllOperators() {
