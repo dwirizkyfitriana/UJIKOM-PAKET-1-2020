@@ -9,7 +9,7 @@ class Operators {
       q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.find(null, {useMasterKey: true}).then(
+      q.find({useMasterKey: true}).then(
         (res) => {
           resolve(JSON.parse(JSON.stringify(res)))
         },

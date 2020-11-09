@@ -14,7 +14,7 @@ let init = async () => {
 
   // console.log('Init Parse')
   Parse.serverURL = ParseURL;
-  await Parse.initialize(ParseAppId, ParseJSKey);
+  Parse.initialize(ParseAppId, ParseJSKey);
   Parse.masterKey = ParseMasterKey
   isInit = true;
   return Parse;
