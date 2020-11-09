@@ -5,7 +5,7 @@ ID = "Your_Site_ID"
 
 [build]
   # This is the directory to change to before starting a build.
-  base    = "project/"
+  base    = "client"
   # NOTE: This is where we will look for package.json/.nvmrc/etc, not root.
   # This is the directory that you are publishing from (relative to root of your repo)
   publish = "project/build-output/"
