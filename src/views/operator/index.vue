@@ -21,7 +21,7 @@
           <tr>
             <td>{{ props.item.name }}</td>
             <td>{{ props.item.email }}</td>
-            <td>{{ props.item.nama_petugas }}</td>
+            <td>{{ props.item.type }}</td>
             <td>
               <v-icon small class="mr-2" color="primary" @click="editData()">
                 mdi-pencil
@@ -191,7 +191,8 @@ export default {
   },
   methods: {
     async getAllData(){
-    this.items = await Operators.getAllOperators()
+      this.items = await Operators.getAllOperators()
+    console.log(this.items)
     },
     async register() {
       await Operators.addOperator(this.inputData)

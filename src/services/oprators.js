@@ -9,7 +9,7 @@ class Operators {
       q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.find().then(
+      q.find({useMasterKey: true}).then(
         (res) => {
           resolve(JSON.parse(JSON.stringify(res)))
         },
@@ -56,7 +56,7 @@ class Operators {
           res.set('type', 'operator')
           console.log('new operator', res)
           
-          res.save(null, {useMasterKey : true}).then((r) => {
+          res.save({useMasterKey : true}).then((r) => {
             resolve(r)
           }, (err) => reject(err))
         },
@@ -76,7 +76,7 @@ class Operators {
         (res) => {
           res.set('status', 500)
           res.set('deletedAt', new Date())
-          res.save(null, {useMasterKey : true}).then((r) => {
+          res.save({useMasterKey : true}).then((r) => {
             resolve(r)
           }, (err) => reject(err))
         },
