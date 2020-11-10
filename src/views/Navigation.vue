@@ -22,7 +22,7 @@
         </v-menu>
       </v-toolbar-items>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" color="blue-grey lighten-5" class="red--text text--lighten-1" fixed app>
+    <v-navigation-drawer v-model="drawer" class="blue-grey darken-2" dark fixed app>
       <v-toolbar color="primary">
         <img src="../assets/logo.svg" alt="Perpustakaan" width="30" height="30" />
       </v-toolbar>
