@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-app-bar fixed app color="primary" class="white--text">
-      <v-app-bar-nav-icon color="white" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        color="white"
+        @click.stop="drawer = !drawer"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title>Managemen SPP</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
@@ -11,23 +14,34 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </template>
-          <v-list-tile @click="logout()">
-            <v-list-tile-content>
-              <v-list-tile-title>Logout</v-list-tile-title>
-            </v-list-tile-content>
-            <v-list-tile-action>
-              <v-icon flat>mdi-logout</v-icon>
-            </v-list-tile-action>
-          </v-list-tile>
+          <v-list dense>
+            <v-list-item-group v-model="selectedAction" color="primary">
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-logout</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Logout</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
         </v-menu>
       </v-toolbar-items>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" class="blue-grey darken-2" dark fixed app>
-      <v-toolbar color="primary">
-        <img src="../assets/logo.svg" alt="Perpustakaan" width="30" height="30" />
+    <v-navigation-drawer v-model="drawer" color="#3c4b64" dark fixed app>
+      <v-toolbar flat color="#3c4b64">
+        <img src="../assets/logo.svg" alt="Spp-Logo" width="30" height="30" />
+        Aplikasi Pembayaran SPP
       </v-toolbar>
       <v-list>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -44,35 +58,51 @@
 export default {
   data() {
     return {
+      selectedAction: 1,
       drawer: null,
       items: [
         {
-          icon: "mdi-finance",
-          title: "Dashboard",
-          to: "/dashboard"
+          icon: 'mdi-view-dashboard-outline',
+          title: 'Dashboard',
+          to: '/dashboard',
         },
         {
-          icon: "mdi-account",
-          title: "Data Petugas",
-          to: "/operator"
+          icon: 'mdi-account-outline',
+          title: 'Data Petugas',
+          to: '/operator',
         },
         {
-          icon: "mdi-school",
-          title: "Data Siswa",
-          to: "/student"
+          icon: 'mdi-calendar-range',
+          title: 'Tahun Spp',
+          to: '/years',
         },
         {
-          icon: "mdi-credit-card-outline",
-          title: "Transaksi",
-          to: "/transaction"
+          icon: 'mdi-account-group-outline',
+          title: 'Data Siswa',
+          to: '/student',
         },
         {
-          icon: "mdi-clipboard-text",
-          title: "Laporan",
-          to: "/report"
+          icon: 'mdi-school-outline',
+          title: 'Kompetensi Keahlian',
+          to: '/majors',
         },
-      ]
-    };
-  }
-};
+        {
+          icon: 'mdi-google-classroom',
+          title: 'Kelas',
+          to: '/classes',
+        },
+        {
+          icon: 'mdi-finance',
+          title: 'Transaksi',
+          to: '/transaction',
+        },
+        {
+          icon: 'mdi-clipboard-text-outline',
+          title: 'Laporan',
+          to: '/report',
+        },
+      ],
+    }
+  },
+}
 </script>

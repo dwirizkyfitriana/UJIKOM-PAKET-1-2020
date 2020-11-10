@@ -23,7 +23,7 @@
             <td>{{ props.item.email }}</td>
             <td>{{ props.item.type }}</td>
             <td>
-              <v-icon small class="mr-2" color="primary" @click="editData()">
+              <v-icon small class="mr-2" color="primary" @click="edit(props.item.objectId)">
                 mdi-pencil
               </v-icon>
               <v-icon
@@ -137,7 +137,10 @@
           <v-btn color="blue darken-1" text @click="reset()">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="register()">
+          <v-btn v-if="update == false" color="blue darken-1" text @click="register()">
+            Save
+          </v-btn>
+          <v-btn v-else color="blue darken-1" text @click="editData()">
             Save
           </v-btn>
         </v-card-actions>
@@ -162,7 +165,9 @@ export default {
       search: '',
       dialog: false,
       valid: true,
+      update: false,
       inputData: {
+        id: '',
         name: '',
         username: '',
         email: '',
@@ -192,14 +197,27 @@ export default {
   methods: {
     async getAllData(){
       this.items = await Operators.getAllOperators()
-    console.log(this.items)
+      console.log(this.items)
     },
     async register() {
       await Operators.addOperator(this.inputData)
       this.reset()
     },
-    async editData(id) {
+    async edit(id) {
       console.log(id)
+      this.update = true
+      this.dialog = !this.dialog
+      await Operators.getOperatorsById(id).then((res) => {
+        this.inputData.id = id
+        this.inputData.name = res.name
+        this.inputData.username = res.username
+        this.inputData.email = res.email
+      })
+    },
+    async editData(){
+      await Operators.updateOperator(this.inputData)
+      this.reset()
+      this.getAllData()
     },
     deleteData(id) {
       this.$swal({

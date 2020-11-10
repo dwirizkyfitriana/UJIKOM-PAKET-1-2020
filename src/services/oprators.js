@@ -20,6 +20,26 @@ class Operators {
     })
   }
 
+  static async getOperatorsById(id) {
+    return new Promise((resolve, reject) => {
+      const Tb = Parse.Object.extend('User')
+      let q = new Parse.Query(Tb)
+
+      q.equalTo('type', 'operator')
+      q.equalTo('status', 1)
+      q.doesNotExist('deletedAt')
+      q.get(id, {useMasterKey: true}).then(
+        (res) => {
+          console.log(JSON.parse(JSON.stringify(res)))
+          resolve(JSON.parse(JSON.stringify(res)))
+        },
+        (err) => {
+          reject(err)
+        }
+      )
+    })
+  }
+
   static async addOperator(data) {
     return new Promise((resolve, reject) => {
       let user = new Parse.User()
@@ -42,12 +62,12 @@ class Operators {
     })
   }
 
-  static async updateOperator(id, data) {
+  static async updateOperator(data) {
     return new Promise((resolve, reject) => {
       const User = new Parse.Object.extend('User')
       let q = new Parse.Query(User)
 
-      q.get(id).then(
+      q.get(data.id).then(
         (res) => {
           res.set('name', data.name)
           res.set('username', data.username)
