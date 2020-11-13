@@ -5,7 +5,7 @@
         color="white"
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title>Managemen SPP</v-toolbar-title>
+      <v-toolbar-title v-text="$route.name"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-menu offset-y>
@@ -16,7 +16,7 @@
           </template>
           <v-list dense>
             <v-list-item-group v-model="selectedAction" color="primary">
-              <v-list-item>
+              <v-list-item @click="logout()">
                 <v-list-item-icon>
                   <v-icon>mdi-logout</v-icon>
                 </v-list-item-icon>
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import Auth from '../services/auth'
 export default {
   data() {
     return {
@@ -93,7 +94,7 @@ export default {
         },
         {
           icon: 'mdi-finance',
-          title: 'Transaksi',
+          title: 'Transaksi Spp',
           to: '/transaction',
         },
         {
@@ -104,5 +105,14 @@ export default {
       ],
     }
   },
+  methods: {
+    async logout(){
+      await Auth.logout().then((res) => {
+          this.$swal('Keluar', 'Anda Berhasil Logout.', 'success')
+          this.$router.push('/login')
+          console.log(res)
+        })
+    }
+  }
 }
 </script>
