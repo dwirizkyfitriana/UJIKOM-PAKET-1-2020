@@ -5,7 +5,10 @@ import VueRouter from 'vue-router'
 import Login from '../views/login'
 import Dashboard from '../views/dashboard'
 import Operator from '../views/operator'
+import Years from '../views/year'
 import Student from '../views/student'
+import Majors from '../views/majors'
+import Classes from '../views/classes'
 import Transaction from '../views/transaction'
 import Report from '../views/report'
 
@@ -34,23 +37,47 @@ const router = new VueRouter({
     },
     {
       path: '/operator',
-      name: 'Operator',
+      name: 'Data Petugas',
       component: Operator,
       meta: {
         requiresAuth: true
       }
     },
     {
+      path: '/years',
+      name: 'Tahun Spp',
+      component: Years,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/student',
-      name: 'Student',
+      name: 'Data Siswa',
       component: Student,
       meta: {
         requiresAuth: true
       }
     },
     {
+      path: '/majors',
+      name: 'Kompetensi Keahlian',
+      component: Majors,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/classes',
+      name: 'Data Kelas',
+      component: Classes,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/transaction',
-      name: 'Transaction',
+      name: 'Transaksi',
       component: Transaction,
       meta: {
         requiresAuth: true
@@ -58,7 +85,7 @@ const router = new VueRouter({
     },
     {
       path: '/report',
-      name: 'Report',
+      name: 'Laporan',
       component: Report,
       meta: {
         requiresAuth: true

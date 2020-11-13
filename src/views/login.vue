@@ -48,7 +48,7 @@
                     <v-flex xs12 md6>
                       <v-btn color="error" @click="reset">Reset</v-btn>
                     </v-flex>
-                    <v-flex xs12 md6 offset-md7 offset-xs6>
+                    <v-flex justify="end">
                       <v-btn :disabled="!valid" color="primary" @click="login"
                         >Login</v-btn
                       >
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import Auth from '../services/auth'
+import Auth from '../services/authentication'
 export default {
   data: () => ({
     valid: true,
@@ -73,8 +73,8 @@ export default {
     showPassword: false,
     password: '',
     rules: {
-      required: (value) => !!value || 'Required',
-      min: (v) => v.length >= 8 || 'Min 8 karakter',
+      required: v => !!v || 'Required',
+      min: v => (v && v.length) >= 8 || 'Min 8 karakter',
     },
     error: false,
   }),

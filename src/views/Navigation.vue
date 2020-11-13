@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import Auth from '../services/auth'
+import Auth from '../services/authentication'
 export default {
   data() {
     return {

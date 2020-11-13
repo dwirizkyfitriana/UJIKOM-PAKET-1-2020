@@ -20,10 +20,16 @@
         <template v-slot:item="props">
           <tr>
             <td>{{ props.item.name }}</td>
+            <td>{{ props.item.username }}</td>
             <td>{{ props.item.email }}</td>
-            <td>{{ props.item.type }}</td>
+            <td>{{ props.item.level }}</td>
             <td>
-              <v-icon small class="mr-2" color="primary" @click="edit(props.item.objectId)">
+              <v-icon
+                small
+                class="mr-2"
+                color="primary"
+                @click="edit(props.item.objectId)"
+              >
                 mdi-pencil
               </v-icon>
               <v-icon
@@ -137,7 +143,12 @@
           <v-btn color="blue darken-1" text @click="reset()">
             Close
           </v-btn>
-          <v-btn v-if="update == false" color="blue darken-1" text @click="register()">
+          <v-btn
+            v-if="update == false"
+            color="blue darken-1"
+            text
+            @click="register()"
+          >
             Save
           </v-btn>
           <v-btn v-else color="blue darken-1" text @click="editData()">
@@ -157,7 +168,8 @@ export default {
     return {
       items: [],
       headers: [
-        { text: 'Nama', value: 'nama_petugas' },
+        { text: 'Nama', value: 'name' },
+        { text: 'Username', value: 'username' },
         { text: 'Email', value: 'email' },
         { text: 'Level', value: 'level' },
         { text: 'Actions', value: 'action', sortable: false },
@@ -175,15 +187,15 @@ export default {
         confirmPassword: '',
         level: '',
         rules: {
-          required: v => !!v || 'Required.',
-          counterMax: v => (v && v.length) <= 50 || 'Max 50 characters',
-          counterMin: v => (v && v.length) >= 8 || 'Min 8 characters',
-          counterMinName: v => (v && v.length) >= 3 || 'Min 3 characters',
-          email: v => {
+          required: (v) => !!v || 'Required.',
+          counterMax: (v) => (v && v.length) <= 50 || 'Max 50 characters',
+          counterMin: (v) => (v && v.length) >= 8 || 'Min 8 characters',
+          counterMinName: (v) => (v && v.length) >= 3 || 'Min 3 characters',
+          email: (v) => {
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             return pattern.test(v) || 'Invalid e-mail.'
           },
-          passConfirm: v =>
+          passConfirm: (v) =>
             v === this.inputData.password || 'Passwords do not match',
         },
         showPass: false,
@@ -195,12 +207,14 @@ export default {
     this.getAllData()
   },
   methods: {
-    async getAllData(){
+    async getAllData() {
       this.items = await Operators.getAllOperators()
       console.log(this.items)
     },
     async register() {
-      await Operators.addOperator(this.inputData)
+      await Operators.addOperator(this.inputData).then((res) => {
+        this.$swal('Berhasil', `Petugas ${res.name} berhasil ditambahkan, silahkan cek email anda pada bagian PROMOSI`, 'success')
+      })
       this.reset()
     },
     async edit(id) {
@@ -214,28 +228,29 @@ export default {
         this.inputData.email = res.email
       })
     },
-    async editData(){
-      await Operators.updateOperator(this.inputData)
+    async editData() {
+      await Operators.updateOperator(this.inputData).then((res) => {
+        this.$swal('Berhasil', `Petugas ${res.name} berhasil diedit, silahkan cek email anda pada bagian PROMOSI`, 'success')
+      })
       this.reset()
       this.getAllData()
     },
     deleteData(id) {
       this.$swal({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!',
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            Operators.deleteOperators(id)
-            this.$swal('Deleted!', 'Operator has been deleted.', 'success')
-            this.getAllData()
-          }
-        })
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await Operators.deleteOperators(id)
+          this.$swal('Deleted!', 'Operator has been deleted.', 'success')
+          this.getAllData()
+        }
+      })
     },
     reset() {
       this.$refs.form.reset()

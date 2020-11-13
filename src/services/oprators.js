@@ -9,7 +9,7 @@ class Operators {
       q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.find({useMasterKey: true}).then(
+      q.find({ useMasterKey: true }).then(
         (res) => {
           resolve(JSON.parse(JSON.stringify(res)))
         },
@@ -28,7 +28,7 @@ class Operators {
       q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.get(id, {useMasterKey: true}).then(
+      q.get(id, { useMasterKey: true }).then(
         (res) => {
           console.log(JSON.parse(JSON.stringify(res)))
           resolve(JSON.parse(JSON.stringify(res)))
@@ -49,11 +49,13 @@ class Operators {
       user.set('password', data.password)
       user.set('email', data.email)
       user.set('type', 'operator')
+      user.set('status', 1)
+      user.set('level', data.level)
 
       user.signUp().then(
         (res) => {
           console.log('new operator', res)
-          resolve(res)
+          resolve(JSON.parse(JSON.stringify(res)))
         },
         (err) => {
           reject(err)
@@ -74,11 +76,16 @@ class Operators {
           res.set('password', data.password)
           res.set('email', data.email)
           res.set('type', 'operator')
+          res.set('level', data.level)
+
           console.log('new operator', res)
-          
-          res.save(null, {useMasterKey : true}).then((r) => {
-            resolve(r)
-          }, (err) => reject(err))
+
+          res.save(null, { useMasterKey: true }).then(
+            (r) => {
+              resolve(JSON.parse(JSON.stringify(r)))
+            },
+            (err) => reject(err)
+          )
         },
         (err) => {
           reject(err)
@@ -96,9 +103,12 @@ class Operators {
         (res) => {
           res.set('status', 500)
           res.set('deletedAt', new Date())
-          res.save(null, {useMasterKey : true}).then((r) => {
-            resolve(r)
-          }, (err) => reject(err))
+          res.save(null, { useMasterKey: true }).then(
+            (r) => {
+              resolve(JSON.parse(JSON.stringify(r)))
+            },
+            (err) => reject(err)
+          )
         },
         (err) => {
           reject(err)
@@ -106,7 +116,6 @@ class Operators {
       )
     })
   }
-
 }
 
 export default Operators
