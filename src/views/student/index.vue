@@ -15,13 +15,19 @@
         >
       </div>
     </v-card-title>
-    <v-card class="ma-5" elevation="10">
+    <v-card class="ma-5 pa-5 pt-0" elevation="10">
+      <v-row>
+        <v-autocomplete class="ma-5" :items="items" label="Pilih Jurusan" auto-select-first clearable></v-autocomplete>
+        <v-autocomplete class="ma-5" :items="items" label="Pilih Kelas" auto-select-first clearable></v-autocomplete>
+      </v-row>
       <v-data-table :headers="headers" :items="items" :search="search">
         <template v-slot:item="props">
           <tr>
+            <td>{{ props.item.nis }}</td>
             <td>{{ props.item.name }}</td>
-            <td>{{ props.item.email }}</td>
-            <td>{{ props.item.nama_petugas }}</td>
+            <td>{{ props.item.class }}</td>
+            <td>{{ props.item.schoolYears }}</td>
+            <td>{{ props.item.spp }}</td>
             <td>
               <v-icon small class="mr-2" color="primary" @click="editData()">
                 mdi-pencil
@@ -41,7 +47,7 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">Tambah Petugas</span>
+          <span class="headline">Tambah Siswa</span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -49,84 +55,54 @@
               <v-row>
                 <v-col cols="12">
                   <v-text-field
-                    label="Nama Petugas"
+                    label="NIS"
+                    v-model="inputData.nis"
+                    :rules="[inputData.rules.required]"
+                    type="number"
+                    class="inputNumber"
+                    clearable
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    label="Nama Siswa"
                     v-model="inputData.name"
-                    :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMinName,
-                      inputData.rules.counterMax,
-                    ]"
-                    counter
-                    clearable
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="Username"
-                    v-model="inputData.username"
-                    :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMinName,
-                    ]"
-                    counter
-                    clearable
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="Email"
-                    v-model="inputData.email"
-                    :rules="[inputData.rules.required, inputData.rules.email]"
-                    clearable
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    label="Password"
-                    v-model="inputData.password"
-                    :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMin,
-                    ]"
-                    :append-icon="
-                      inputData.showPass ? 'mdi-eye' : 'mdi-eye-off'
-                    "
-                    :type="inputData.showPass ? 'text' : 'password'"
-                    clearable
-                    @click:append="inputData.showPass = !inputData.showPass"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    label="Confirm Password"
-                    v-model="inputData.confirmPassword"
-                    :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMin,
-                      inputData.rules.passConfirm,
-                    ]"
-                    :append-icon="
-                      inputData.showPass2 ? 'mdi-eye' : 'mdi-eye-off'
-                    "
-                    :type="inputData.showPass2 ? 'text' : 'password'"
-                    clearable
-                    @click:append="inputData.showPass2 = !inputData.showPass2"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-select
-                    :items="['Admin', 'Petugas']"
-                    v-model="inputData.level"
-                    label="Level"
                     :rules="[inputData.rules.required]"
                     clearable
                     required
-                  ></v-select>
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    :items="['Admin', 'Petugas']"
+                    v-model="inputData.level"
+                    label="Kelas"
+                    auto-select-first
+                    :rules="[inputData.rules.required]"
+                    clearable
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    :items="['Admin', 'Petugas']"
+                    v-model="inputData.level"
+                    label="Kelas"
+                    auto-select-first
+                    :rules="[inputData.rules.required]"
+                    clearable
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    label="Tahun Ajaran"
+                    v-model="inputData.name"
+                    :rules="[inputData.rules.required]"
+                    clearable
+                    required
+                  ></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
@@ -154,9 +130,11 @@ export default {
     return {
       items: [],
       headers: [
-        { text: 'Nama', value: 'nama_petugas' },
-        { text: 'Email', value: 'email' },
-        { text: 'Level', value: 'level' },
+        { text: 'NIS', value: 'nis' },
+        { text: 'Nama Siswa', value: 'name' },
+        { text: 'Kelas', value: 'class' },
+        { text: 'Tahun Ajaran', value: 'schoolYears' },
+        { text: 'Biaya SPP', value: 'spp' },
         { text: 'Actions', value: 'action', sortable: false },
       ],
       search: '',
@@ -164,34 +142,23 @@ export default {
       valid: true,
       inputData: {
         name: '',
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        level: '',
+        nis: '',
+        majors: '',
+        class: '',
         rules: {
-          required: v => !!v || 'Required.',
-          counterMax: v => (v && v.length) <= 50 || 'Max 50 characters',
-          counterMin: v => (v && v.length) >= 8 || 'Min 8 characters',
-          counterMinName: v => (v && v.length) >= 3 || 'Min 3 characters',
-          email: v => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            return pattern.test(v) || 'Invalid e-mail.'
-          },
-          passConfirm: v =>
-            v === this.inputData.password || 'Passwords do not match',
+          required: (v) => !!v || 'Required.',
+          showPass: false,
+          showPass2: false,
         },
-        showPass: false,
-        showPass2: false,
       },
     }
   },
   mounted() {
-    this.getAllData()
+    // this.getAllData()
   },
   methods: {
-    async getAllData(){
-    this.items = await Operators.getAllOperators()
+    async getAllData() {
+      this.items = await Operators.getAllOperators()
     },
     async register() {
       await Operators.addOperator(this.inputData)
@@ -202,21 +169,20 @@ export default {
     },
     deleteData(id) {
       this.$swal({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!',
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            Operators.deleteOperators(id)
-            this.$swal('Deleted!', 'Operator has been deleted.', 'success')
-            this.getAllData()
-          }
-        })
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Operators.deleteOperators(id)
+          this.$swal('Deleted!', 'Operator has been deleted.', 'success')
+          this.getAllData()
+        }
+      })
     },
     reset() {
       this.$refs.form.reset()
@@ -226,4 +192,13 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.inputNumber input[type='number']{
+  -moz-appearance:textfield
+}
+.inputNumber input::-webkit-outer-spin-button,
+.inputNumber input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+</style>

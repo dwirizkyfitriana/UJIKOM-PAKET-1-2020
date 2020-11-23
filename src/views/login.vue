@@ -48,7 +48,7 @@
                     <v-flex xs12 md6>
                       <v-btn color="error" @click="reset">Reset</v-btn>
                     </v-flex>
-                    <v-flex justify="end">
+                    <v-flex class="d-flex justify-end">
                       <v-btn :disabled="!valid" color="primary" @click="login"
                         >Login</v-btn
                       >

@@ -5,7 +5,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/login'
 import Dashboard from '../views/dashboard'
 import Operator from '../views/operator'
-import Years from '../views/year'
+import SchoolYears from '../views/schoolyear'
 import Student from '../views/student'
 import Majors from '../views/majors'
 import Classes from '../views/classes'
@@ -44,9 +44,9 @@ const router = new VueRouter({
       }
     },
     {
-      path: '/years',
-      name: 'Tahun Spp',
-      component: Years,
+      path: '/school-years',
+      name: 'Tahun Ajaran',
+      component: SchoolYears,
       meta: {
         requiresAuth: true
       }

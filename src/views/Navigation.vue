@@ -74,8 +74,8 @@ export default {
         },
         {
           icon: 'mdi-calendar-range',
-          title: 'Tahun Spp',
-          to: '/years',
+          title: 'Tahun Ajaran',
+          to: '/school-years',
         },
         {
           icon: 'mdi-account-group-outline',
