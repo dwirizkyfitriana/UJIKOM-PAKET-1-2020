@@ -9,11 +9,9 @@ class Operators {
       q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.find({ useMasterKey: true }).then(
-        (res) => {
+      q.find({ useMasterKey: true }).then((res) => {
           resolve(JSON.parse(JSON.stringify(res)))
-        },
-        (err) => {
+        }, (err) => {
           reject(err)
         }
       )
@@ -28,12 +26,10 @@ class Operators {
       q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.get(id, { useMasterKey: true }).then(
-        (res) => {
+      q.get(id, { useMasterKey: true }).then((res) => {
           console.log(JSON.parse(JSON.stringify(res)))
           resolve(JSON.parse(JSON.stringify(res)))
-        },
-        (err) => {
+        }, (err) => {
           reject(err)
         }
       )
@@ -52,12 +48,10 @@ class Operators {
       user.set('status', 1)
       user.set('level', data.level)
 
-      user.signUp().then(
-        (res) => {
+      user.signUp().then((res) => {
           console.log('new operator', res)
           resolve(JSON.parse(JSON.stringify(res)))
-        },
-        (err) => {
+        }, (err) => {
           reject(err)
         }
       )
@@ -69,8 +63,7 @@ class Operators {
       const User = new Parse.Object.extend('User')
       let q = new Parse.Query(User)
 
-      q.get(data.id).then(
-        (res) => {
+      q.get(data.id).then((res) => {
           res.set('name', data.name)
           res.set('username', data.username)
           res.set('password', data.password)
@@ -80,14 +73,11 @@ class Operators {
 
           console.log('new operator', res)
 
-          res.save(null, { useMasterKey: true }).then(
-            (r) => {
+          res.save(null, { useMasterKey: true }).then((r) => {
               resolve(JSON.parse(JSON.stringify(r)))
-            },
-            (err) => reject(err)
+            }, (err) => reject(err)
           )
-        },
-        (err) => {
+        }, (err) => {
           reject(err)
         }
       )
@@ -99,18 +89,14 @@ class Operators {
       const Tb = Parse.Object.extend('User')
       let q = new Parse.Query(Tb)
 
-      q.get(id).then(
-        (res) => {
+      q.get(id).then((res) => {
           res.set('status', 500)
           res.set('deletedAt', new Date())
-          res.save(null, { useMasterKey: true }).then(
-            (r) => {
+          res.save(null, { useMasterKey: true }).then((r) => {
               resolve(JSON.parse(JSON.stringify(r)))
-            },
-            (err) => reject(err)
+            }, (err) => reject(err)
           )
-        },
-        (err) => {
+        }, (err) => {
           reject(err)
         }
       )

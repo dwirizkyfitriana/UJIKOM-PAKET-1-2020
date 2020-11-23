@@ -25,11 +25,14 @@
           <tr>
             <td>{{ props.item.nis }}</td>
             <td>{{ props.item.name }}</td>
+            <td v-if="props.item.gender == 'P'">Perempuan</td>
+            <td v-else-if="props.item.gender == 'L'">Laki-laki</td>
+            <td>{{ props.item.major }}</td>
             <td>{{ props.item.class }}</td>
             <td>{{ props.item.schoolYears }}</td>
             <td>{{ props.item.spp }}</td>
             <td>
-              <v-icon small class="mr-2" color="primary" @click="editData()">
+              <v-icon small class="mr-2" color="primary" @click="editData(props.item.objectId)">
                 mdi-pencil
               </v-icon>
               <v-icon
@@ -75,8 +78,19 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    :items="['Admin', 'Petugas']"
-                    v-model="inputData.level"
+                    :items="['Rekayasa Perangkat Lunak', 'Sistem informasi Jaringan dan Aplikasi']"
+                    v-model="inputData.major"
+                    label="Kompetensi keahlian"
+                    auto-select-first
+                    :rules="[inputData.rules.required]"
+                    clearable
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    :items="['X A', 'X B']"
+                    v-model="inputData.class"
                     label="Kelas"
                     auto-select-first
                     :rules="[inputData.rules.required]"
@@ -86,23 +100,14 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    :items="['Admin', 'Petugas']"
-                    v-model="inputData.level"
-                    label="Kelas"
+                    :items="['2017', '2018', '2019', '2020']"
+                    v-model="inputData.schoolYears"
+                    label="Tahun Ajaran"
                     auto-select-first
                     :rules="[inputData.rules.required]"
                     clearable
                     required
                   ></v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    label="Tahun Ajaran"
-                    v-model="inputData.name"
-                    :rules="[inputData.rules.required]"
-                    clearable
-                    required
-                  ></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
@@ -113,7 +118,15 @@
           <v-btn color="blue darken-1" text @click="reset()">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="register()">
+          <v-btn
+            v-if="update == false"
+            color="blue darken-1"
+            text
+            @click="register()"
+          >
+            Save
+          </v-btn>
+          <v-btn v-else color="blue darken-1" text @click="register()">
             Save
           </v-btn>
         </v-card-actions>
@@ -123,7 +136,7 @@
 </template>
 
 <script>
-import Operators from '../../services/oprators'
+import Students from '../../services/students'
 
 export default {
   data() {
@@ -132,6 +145,8 @@ export default {
       headers: [
         { text: 'NIS', value: 'nis' },
         { text: 'Nama Siswa', value: 'name' },
+        { text: 'Jenis Kelamin', value: 'gender'},
+        { text: 'Kompetensi Keahlian', value: 'major' },
         { text: 'Kelas', value: 'class' },
         { text: 'Tahun Ajaran', value: 'schoolYears' },
         { text: 'Biaya SPP', value: 'spp' },
@@ -140,32 +155,47 @@ export default {
       search: '',
       dialog: false,
       valid: true,
+      update: false,
       inputData: {
+        id: '',
         name: '',
         nis: '',
-        majors: '',
+        gender: '',
+        major: '',
         class: '',
+        schoolYears: '',
         rules: {
           required: (v) => !!v || 'Required.',
-          showPass: false,
-          showPass2: false,
         },
       },
     }
   },
   mounted() {
-    // this.getAllData()
+    this.getAllData()
   },
   methods: {
     async getAllData() {
-      this.items = await Operators.getAllOperators()
+      this.items = await Students.getAllStudents()
     },
     async register() {
-      await Operators.addOperator(this.inputData)
+      await Students.addStudent(this.inputData).then((res) => {
+        this.$swal('Berhasil', `Siswa ${res.name} berhasil diubah`, 'success')
+      })
       this.reset()
     },
     async editData(id) {
       console.log(id)
+      this.update = true
+      this.dialog = !this.dialog
+      await Students.getStudentById(id).then((res) => {
+        this.inputData.id = id
+        this.inputData.name = res.name
+        this.inputData.nis = res.nis
+        this.inputData.gender = res.gender
+        this.inputData.major = res.major
+        this.inputData.class = res.class
+        this.inputData.schoolYears = res.schoolYears
+      })
     },
     deleteData(id) {
       this.$swal({
@@ -178,7 +208,7 @@ export default {
         confirmButtonText: 'Yes, delete it!',
       }).then((result) => {
         if (result.isConfirmed) {
-          Operators.deleteOperators(id)
+          Students.deleteStudent(id)
           this.$swal('Deleted!', 'Operator has been deleted.', 'success')
           this.getAllData()
         }

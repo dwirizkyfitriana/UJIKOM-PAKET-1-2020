@@ -204,16 +204,22 @@ export default {
     }
   },
   mounted() {
-    this.getAllData()
+    console.log('stored data operators', this.$store.getters['operators/getAllOperators'])
+    if(this.$store.getters['operators/getAllOperators'] == null){
+      this.getAllData()
+    }
+    else this.items = this.$store.getters['operators/getAllOperators']
   },
   methods: {
     async getAllData() {
-      this.items = await Operators.getAllOperators()
-      console.log(this.items)
+      let res = await Operators.getAllOperators()
+      console.log(res)
+      this.$store.commit('operators/SET_ALL_OPERATORS', res)
+      this.items = this.$store.getters['operators/getAllOperators']
     },
     async register() {
       await Operators.addOperator(this.inputData).then((res) => {
-        this.$swal('Berhasil', `Petugas ${res.name} berhasil ditambahkan, silahkan cek email anda pada bagian PROMOSI`, 'success')
+        this.$swal('Berhasil', `Petugas ${res.name} berhasil diubah, silahkan cek email anda pada bagian PROMOSI`, 'success')
       })
       this.reset()
     },
