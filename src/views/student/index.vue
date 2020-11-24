@@ -17,8 +17,8 @@
     </v-card-title>
     <v-card class="ma-5 pa-5 pt-0" elevation="10">
       <v-row>
-        <v-autocomplete class="ma-5" :items="items" label="Pilih Jurusan" auto-select-first clearable></v-autocomplete>
-        <v-autocomplete class="ma-5" :items="items" label="Pilih Kelas" auto-select-first clearable></v-autocomplete>
+        <v-autocomplete class="ma-5" :items="majors" label="Pilih Jurusan" auto-select-first clearable></v-autocomplete>
+        <v-autocomplete class="ma-5" :items="classess" label="Pilih Kelas" auto-select-first clearable></v-autocomplete>
       </v-row>
       <v-data-table :headers="headers" :items="items" :search="search">
         <template v-slot:item="props">
@@ -32,7 +32,7 @@
             <td>{{ props.item.schoolYears }}</td>
             <td>{{ props.item.spp }}</td>
             <td>
-              <v-icon small class="mr-2" color="primary" @click="editData(props.item.objectId)">
+              <v-icon small class="mr-2" color="primary" @click="edit(props.item.objectId)">
                 mdi-pencil
               </v-icon>
               <v-icon
@@ -126,7 +126,7 @@
           >
             Save
           </v-btn>
-          <v-btn v-else color="blue darken-1" text @click="register()">
+          <v-btn v-else color="blue darken-1" text @click="editData()">
             Save
           </v-btn>
         </v-card-actions>
@@ -137,10 +137,13 @@
 
 <script>
 import Students from '../../services/students'
+import Majors from '../../services/majors'
 
 export default {
   data() {
     return {
+      majors: [],
+      classess: [],
       items: [],
       headers: [
         { text: 'NIS', value: 'nis' },
@@ -170,20 +173,41 @@ export default {
       },
     }
   },
-  mounted() {
-    this.getAllData()
+  async mounted() {
+    // get all students
+    if(this.$store.getters['students/getAllStudents'] == null){
+      this.getAllData()
+    }
+    else this.items = this.$store.getters['students/getAllStudents']
+
+    // get all majors
+    if(this.$store.getters['majors/getAllmajors'] == null){
+      await Majors.getAllMajors().then((res) => {
+        this.$store.commit('majors/SET_ALL_MAJORS', res)
+        this.majors = res.map(item => item.name)
+      })
+    }
+    else{
+      let res = this.$store.getters['majors/getAllmajors']
+      this.majors = res.map(item => item.name)
+    }
+    console.log('majors', this.majors)
   },
   methods: {
     async getAllData() {
-      this.items = await Students.getAllStudents()
+      await Students.getAllStudents().then((res) => {
+        console.log('data siswa', res)
+        this.$store.commit('students/SET_ALL_STUDENTS', res)
+        this.items = this.$store.getters['students/getAllStudents']
+      })
     },
     async register() {
       await Students.addStudent(this.inputData).then((res) => {
-        this.$swal('Berhasil', `Siswa ${res.name} berhasil diubah`, 'success')
+        this.$swal('Berhasil', `Siswa ${res.name} berhasil ditambahkan`, 'success')
       })
       this.reset()
     },
-    async editData(id) {
+    async edit(id) {
       console.log(id)
       this.update = true
       this.dialog = !this.dialog
@@ -197,6 +221,13 @@ export default {
         this.inputData.schoolYears = res.schoolYears
       })
     },
+    async editData() {
+      await Students.updateStudent(this.inputData).then(() => {
+        this.$swal('Berhasil', 'siswa berhasil diubah', 'success')
+      })
+      this.reset()
+      this.getAllData()
+    },
     deleteData(id) {
       this.$swal({
         title: 'Are you sure?',
@@ -209,7 +240,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           Students.deleteStudent(id)
-          this.$swal('Deleted!', 'Operator has been deleted.', 'success')
+          this.$swal('Deleted!', 'Student has been deleted.', 'success')
           this.getAllData()
         }
       })

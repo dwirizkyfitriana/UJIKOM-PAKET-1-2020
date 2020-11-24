@@ -1,15 +1,16 @@
 import { Parse } from './parseConfig'
 
-class Operators {
-  static async getAllOperators() {
+class Majors {
+  static async getAllMajors() {
     return new Promise((resolve, reject) => {
-      const Tb = Parse.Object.extend('User')
+      const Tb = Parse.Object.extend('Majors')
       let q = new Parse.Query(Tb)
 
-      q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.find({ useMasterKey: true }).then((res) => {
+      q.ascending('name')
+
+      q.find().then((res) => {
           resolve(JSON.parse(JSON.stringify(res)))
         }, (err) => {
           reject(err)
@@ -18,15 +19,15 @@ class Operators {
     })
   }
 
-  static async getOperatorById(id) {
+  static async getMajorById(id) {
     return new Promise((resolve, reject) => {
-      const Tb = Parse.Object.extend('User')
+      const Tb = Parse.Object.extend('Majors')
       let q = new Parse.Query(Tb)
 
-      q.equalTo('type', 'operator')
       q.equalTo('status', 1)
       q.doesNotExist('deletedAt')
-      q.get(id, { useMasterKey: true }).then((res) => {
+
+      q.get(id).then((res) => {
           console.log(JSON.parse(JSON.stringify(res)))
           resolve(JSON.parse(JSON.stringify(res)))
         }, (err) => {
@@ -36,20 +37,17 @@ class Operators {
     })
   }
 
-  static async addOperator(data) {
+  static async addMajor(data) {
     return new Promise((resolve, reject) => {
-      let user = new Parse.User()
+      const Tb = Parse.Object.extend('Majors')
+      let q = new Parse.Query(Tb)
 
-      user.set('name', data.name)
-      user.set('username', data.username)
-      user.set('password', data.password)
-      user.set('email', data.email)
-      user.set('type', 'operator')
-      user.set('status', 1)
-      user.set('level', data.level)
+      q.set('name', data.name)
+      q.set('code', data.code)
+      q.set('status', 1)
 
-      user.signUp().then((res) => {
-          console.log('new operator', res)
+      q.save().then((res) => {
+          console.log('new majors', res)
           resolve(JSON.parse(JSON.stringify(res)))
         }, (err) => {
           reject(err)
@@ -58,22 +56,18 @@ class Operators {
     })
   }
 
-  static async updateOperator(data) {
+  static async updateMajor(data) {
     return new Promise((resolve, reject) => {
-      const User = new Parse.Object.extend('User')
+      const User = new Parse.Object.extend('Majors')
       let q = new Parse.Query(User)
 
       q.get(data.id).then((res) => {
           res.set('name', data.name)
-          res.set('username', data.username)
-          res.set('password', data.password)
-          res.set('email', data.email)
-          res.set('type', 'operator')
-          res.set('level', data.level)
+          res.set('code', data.code)
 
-          console.log('new operator', res)
+          console.log('updated majors', res)
 
-          res.save(null, { useMasterKey: true }).then((r) => {
+          res.save().then((r) => {
               resolve(JSON.parse(JSON.stringify(r)))
             }, (err) => reject(err)
           )
@@ -84,15 +78,15 @@ class Operators {
     })
   }
 
-  static async deleteOperator(id) {
+  static async deleteMajor(id) {
     return new Promise((resolve, reject) => {
-      const Tb = Parse.Object.extend('User')
+      const Tb = Parse.Object.extend('Majors')
       let q = new Parse.Query(Tb)
 
       q.get(id).then((res) => {
           res.set('status', 500)
           res.set('deletedAt', new Date())
-          res.save(null, { useMasterKey: true }).then((r) => {
+          res.save().then((r) => {
               resolve(JSON.parse(JSON.stringify(r)))
             }, (err) => reject(err)
           )
@@ -104,4 +98,4 @@ class Operators {
   }
 }
 
-export default Operators
+export default Majors

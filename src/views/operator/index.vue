@@ -227,7 +227,7 @@ export default {
       console.log(id)
       this.update = true
       this.dialog = !this.dialog
-      await Operators.getOperatorsById(id).then((res) => {
+      await Operators.getOperatorById(id).then((res) => {
         this.inputData.id = id
         this.inputData.name = res.name
         this.inputData.username = res.username
@@ -252,7 +252,7 @@ export default {
         confirmButtonText: 'Yes, delete it!',
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await Operators.deleteOperators(id)
+          await Operators.deleteOperator(id)
           this.$swal('Deleted!', 'Operator has been deleted.', 'success')
           this.getAllData()
         }
