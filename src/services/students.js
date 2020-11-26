@@ -8,7 +8,9 @@ class Students {
 
       q.include('major')
       q.include('class')
+      q.include('schoolYears.year')
       q.ascending('nis')
+      q.doesNotExist('deletedAt')
 
       q.find().then((res) => {
           resolve(JSON.parse(JSON.stringify(res)))
@@ -23,6 +25,7 @@ class Students {
 
       q.include('major')
       q.include('class')
+      q.include('schoolYears.year')
 
       q.get(id).then((res) => {
           resolve(JSON.parse(JSON.stringify(res)))
@@ -37,10 +40,9 @@ class Students {
 
       q.set('nis', data.nis)
       q.set('name', data.name)
-      q.set('major', data.major)
-      q.set('class', data.class)
-      q.set('schoolYears', data.schoolYears)
-      q.set('spp')
+      q.set('major', { __type: 'Pointer', className: 'Majors', objectId: data.major })
+      q.set('class', { __type: 'Pointer', className: 'Majors', objectId: data.class })
+      q.set('schoolYears', { __type: 'Pointer', className: 'Majors', objectId: data.schoolYears })
 
       q.save().then((res) => {
           console.log('new student', res)
@@ -59,10 +61,9 @@ class Students {
       q.get(data.id).then((res) => {
           res.set('nis', data.nis)
           res.set('name', data.name)
-          res.set('major', data.major)
-          res.set('class', data.class)
-          res.set('schoolYears', data.schoolYears)
-          res.set('spp')
+          res.set('major', { __type: 'Pointer', className: 'Majors', objectId: data.major })
+          res.set('class', { __type: 'Pointer', className: 'Majors', objectId: data.class })
+          res.set('schoolYears', { __type: 'Pointer', className: 'Majors', objectId: data.schoolYears })
 
           console.log('new operator', res)
 

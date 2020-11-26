@@ -6,6 +6,8 @@ import auth from './authStore'
 import operators from './operatorStore'
 import students from './studentStore'
 import majors from './majorStore'
+import classes from './classesStore'
+import years from './schoolYearsStore'
 
 Vue.use(Vuex)
 
@@ -15,5 +17,7 @@ export default new Vuex.Store({
     operators,
     students,
     majors,
+    classes,
+    years,
   },
 })

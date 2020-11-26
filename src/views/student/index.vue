@@ -17,8 +17,8 @@
     </v-card-title>
     <v-card class="ma-5 pa-5 pt-0" elevation="10">
       <v-row>
-        <v-autocomplete class="ma-5" :items="majors" label="Pilih Jurusan" auto-select-first clearable></v-autocomplete>
-        <v-autocomplete class="ma-5" :items="classess" label="Pilih Kelas" auto-select-first clearable></v-autocomplete>
+        <v-autocomplete class="ma-5" :items="majors" item-text="name" item-value="objectId" label="Pilih Jurusan" v-model="major" auto-select-first clearable></v-autocomplete>
+        <v-autocomplete class="ma-5" :items="classes" item-text="name" item-value="objectId" label="Pilih Kelas" v-model="klass" auto-select-first clearable></v-autocomplete>
       </v-row>
       <v-data-table :headers="headers" :items="items" :search="search">
         <template v-slot:item="props">
@@ -27,10 +27,10 @@
             <td>{{ props.item.name }}</td>
             <td v-if="props.item.gender == 'P'">Perempuan</td>
             <td v-else-if="props.item.gender == 'L'">Laki-laki</td>
-            <td>{{ props.item.major }}</td>
-            <td>{{ props.item.class }}</td>
-            <td>{{ props.item.schoolYears }}</td>
-            <td>{{ props.item.spp }}</td>
+            <td>{{ props.item.major.name }}</td>
+            <td>{{ props.item.class.name }}</td>
+            <td>{{ props.item.schoolYears.year }}</td>
+            <td>{{ props.item.schoolYears.amountPaid }}</td>
             <td>
               <v-icon small class="mr-2" color="primary" @click="edit(props.item.objectId)">
                 mdi-pencil
@@ -78,7 +78,9 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    :items="['Rekayasa Perangkat Lunak', 'Sistem informasi Jaringan dan Aplikasi']"
+                    :items="majors"
+                    item-text="name"
+                    item-value="objectId"
                     v-model="inputData.major"
                     label="Kompetensi keahlian"
                     auto-select-first
@@ -89,7 +91,9 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    :items="['X A', 'X B']"
+                    :items="classes"
+                    item-text="name"
+                    item-value="objectId"
                     v-model="inputData.class"
                     label="Kelas"
                     auto-select-first
@@ -100,9 +104,11 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    :items="['2017', '2018', '2019', '2020']"
+                    :items="years"
+                    item-text="year"
+                    item-value="objectId"
                     v-model="inputData.schoolYears"
-                    label="Tahun Ajaran"
+                    label="Tahun Masuk"
                     auto-select-first
                     :rules="[inputData.rules.required]"
                     clearable
@@ -138,20 +144,25 @@
 <script>
 import Students from '../../services/students'
 import Majors from '../../services/majors'
+import Classes from '../../services/classes'
+import Years from '../../services/years'
 
 export default {
   data() {
     return {
-      majors: [],
-      classess: [],
       items: [],
+      majors: [],
+      classes: [],
+      years: [],
+      major: '',
+      klass: '',
       headers: [
         { text: 'NIS', value: 'nis' },
-        { text: 'Nama Siswa', value: 'name' },
+        { text: 'Nama Siswa', value: 'name', },
         { text: 'Jenis Kelamin', value: 'gender'},
         { text: 'Kompetensi Keahlian', value: 'major' },
         { text: 'Kelas', value: 'class' },
-        { text: 'Tahun Ajaran', value: 'schoolYears' },
+        { text: 'Tahun Masuk', value: 'schoolYears' },
         { text: 'Biaya SPP', value: 'spp' },
         { text: 'Actions', value: 'action', sortable: false },
       ],
@@ -173,6 +184,47 @@ export default {
       },
     }
   },
+  watch: {
+    // filtering students by major
+    major(val){
+      if(val){
+        let res = this.$store.getters['students/getAllStudents'].filter(item => item.major.objectId == val)
+        this.items = res
+
+        // filtering classes by major
+        let fileredClass = this.$store.getters['classes/getAllClasses'].filter(item => item.major.objectId == val)
+        this.classes = fileredClass
+      }
+      else {
+        this.items = this.$store.getters['students/getAllStudents']
+        this.classes =  this.$store.getters['classes/getAllClasses']
+      }
+    },
+    // filtering classes in form by major
+    'inputData.major'(val){
+      if(val){
+        let fileredClass = this.$store.getters['classes/getAllClasses'].filter(item => item.major.objectId == val)
+        this.classes = fileredClass
+      }
+      else {
+        this.classes =  this.$store.getters['classes/getAllClasses']
+      }
+    },
+    // filtering students by class
+    klass(val){
+      // filtering students by major & class
+      if(val && this.major){
+        let res = this.$store.getters['students/getAllStudents'].filter(item => item.class.objectId == val && item.major.objectId == this.major)
+        this.items = res
+      }
+      // filtering students by class only
+      else if(val && !this.major){
+        let res = this.$store.getters['students/getAllStudents'].filter(item => item.class.objectId == val)
+        this.items = res
+      }
+      else this.$store.getters['students/getAllStudents']
+    },
+  },
   async mounted() {
     // get all students
     if(this.$store.getters['students/getAllStudents'] == null){
@@ -181,17 +233,39 @@ export default {
     else this.items = this.$store.getters['students/getAllStudents']
 
     // get all majors
-    if(this.$store.getters['majors/getAllmajors'] == null){
+    if(this.$store.getters['majors/getAllMajors'] == null){
       await Majors.getAllMajors().then((res) => {
         this.$store.commit('majors/SET_ALL_MAJORS', res)
-        this.majors = res.map(item => item.name)
+        this.majors = res
       })
     }
     else{
-      let res = this.$store.getters['majors/getAllmajors']
-      this.majors = res.map(item => item.name)
+      let res = this.$store.getters['majors/getAllMajors']
+      this.majors = res
     }
-    console.log('majors', this.majors)
+
+    // get all class
+    if(this.$store.getters['classes/getAllClasses'] == null){
+      await Classes.getAllClasses().then((res) => {
+        this.$store.commit('classes/SET_ALL_CLASSES', res)
+        this.classes = res
+      })
+    }
+    else{
+      let res = this.$store.getters['classes/getAllClasses']
+      this.classes = res
+    }
+    // get all years
+    if(this.$store.getters['years/getAllYears'] == null){
+      await Years.getAllSchoolYears().then((res) => {
+        this.$store.commit('years/SET_ALL_YEARS', res)
+        this.years = res
+      })
+    }
+    else{
+      let res = this.$store.getters['years/getAllYears']
+      this.years = res
+    }
   },
   methods: {
     async getAllData() {
