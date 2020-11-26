@@ -67,7 +67,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="8">
                   <v-text-field
                     label="Nama Siswa"
                     v-model="inputData.name"
@@ -75,6 +75,19 @@
                     clearable
                     required
                   ></v-text-field>
+                </v-col>
+                <v-col cols="4">
+                  <v-autocomplete
+                    :items="genders"
+                    item-text="label"
+                    item-value="value"
+                    v-model="inputData.gender"
+                    label="Jenis Kelamin"
+                    auto-select-first
+                    :rules="[inputData.rules.required]"
+                    clearable
+                    required
+                  ></v-autocomplete>
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
@@ -154,6 +167,10 @@ export default {
       majors: [],
       classes: [],
       years: [],
+      genders: [
+        { label: 'Laki-laki', value: 'L' },
+        { label: 'Perempuan', value: 'P' }
+      ],
       major: '',
       klass: '',
       headers: [
@@ -286,14 +303,17 @@ export default {
       this.update = true
       this.dialog = !this.dialog
       await Students.getStudentById(id).then((res) => {
+        console.log(res)
         this.inputData.id = id
         this.inputData.name = res.name
+        this.inputData.gender = res.gender
         this.inputData.nis = res.nis
         this.inputData.gender = res.gender
-        this.inputData.major = res.major
-        this.inputData.class = res.class
+        this.inputData.major = res.major.objectId
+        this.inputData.class = res.class.objectId
         this.inputData.schoolYears = res.schoolYears
       })
+      console.log('jurusan', this.inputData.major)
     },
     async editData() {
       await Students.updateStudent(this.inputData).then(() => {

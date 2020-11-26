@@ -40,6 +40,7 @@ class Students {
 
       q.set('nis', data.nis)
       q.set('name', data.name)
+      q.set('gender', data.gender)
       q.set('major', { __type: 'Pointer', className: 'Majors', objectId: data.major })
       q.set('class', { __type: 'Pointer', className: 'Majors', objectId: data.class })
       q.set('schoolYears', { __type: 'Pointer', className: 'Majors', objectId: data.schoolYears })
@@ -61,6 +62,7 @@ class Students {
       q.get(data.id).then((res) => {
           res.set('nis', data.nis)
           res.set('name', data.name)
+          res.set('gender', data.gender)
           res.set('major', { __type: 'Pointer', className: 'Majors', objectId: data.major })
           res.set('class', { __type: 'Pointer', className: 'Majors', objectId: data.class })
           res.set('schoolYears', { __type: 'Pointer', className: 'Majors', objectId: data.schoolYears })

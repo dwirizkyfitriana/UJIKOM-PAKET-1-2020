@@ -17,7 +17,7 @@ class Years {
     })
   }
 
-  static async getClassById(id) {
+  static async getSchoolyearById(id) {
     return new Promise((resolve, reject) => {
       const Tb = Parse.Object.extend('SchoolYears')
       let q = new Parse.Query(Tb)
