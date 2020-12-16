@@ -24,6 +24,10 @@ Vue.filter('date', function (value) {
   if (!value) return ''
   return dayjs(value).format('DD MMM YYYY')
 })
+Vue.filter('datetime', function (value) {
+  if (!value) return ''
+  return dayjs(value).format('DD MMM YYYY HH:mm:ss')
+})
 
 new Vue({
   vuetify,

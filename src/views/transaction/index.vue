@@ -83,39 +83,73 @@
         @click:row="getDetaiTransaction"
         style="cursor: pointer"
       >
-        <template  v-slot:item.createdAt="{item}">
-        <tr>
+        <template v-slot:item.createdAt="{ item }">
+          <tr>
             <td>{{ item.createdAt | date }}</td>
           </tr>
         </template>
       </v-data-table>
     </v-card>
-    <v-dialog v-model="detailDialog" persistent max-width="600px">
+    <v-dialog
+      v-if="detailTrans"
+      v-model="detailDialog"
+      persistent
+      max-width="600px"
+    >
       <v-card>
         <v-card-title>
-          <span class="headline">Detai transaction</span>
+          <span class="headline">Detai Transaksi</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12">
-                <v-text-field label="Nama Petugas"></v-text-field>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Nis</h4>
+                <h4 class="text-body-1">{{ detailTrans.nis }}</h4>
+              </v-col>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Kode Transaksi</h4>
+                <h4 class="text-body-1">{{ detailTrans.serialCode }}</h4>
+              </v-col>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Nama</h4>
+                <h4 class="text-body-1">{{ detailTrans.name }}</h4>
+              </v-col>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Kelas</h4>
+                <h4 class="text-body-1">{{ detailTrans.class }}</h4>
               </v-col>
               <v-col cols="12">
-                <v-text-field label="Username"></v-text-field>
+                <h4 class="text-subtitle-2">Kompetensi Keahlian</h4>
+                <h4 class="text-body-1">{{ detailTrans.student.major.name }}</h4>
               </v-col>
-              <v-col cols="12">
-                <v-text-field label="Email"></v-text-field>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Pembayaran Bulan</h4>
+                <h4 class="text-body-1">{{ detailTrans.month }}</h4>
               </v-col>
-              <v-col cols="12">
-                <v-select label="Level"></v-select>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Jumlah Bayar</h4>
+                <h4 class="text-body-1">Rp {{ detailTrans.amountPay }}</h4>
+              </v-col>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Keterangan</h4>
+                <h4 class="text-body-1" v-if="detailTrans.statusid == 1">
+                  LUNAS
+                </h4>
+                <h4 class="text-body-1" v-else>Belum Lunas</h4>
+              </v-col>
+              <v-col cols="6">
+                <h4 class="text-subtitle-2">Tanggal Bayar</h4>
+                <h4 class="text-body-1">
+                  {{ detailTrans.createdAt | datetime }}
+                </h4>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="reset()">
+          <v-btn color="blue darken-1" text @click="detailDialog = false">
             Tutup
           </v-btn>
         </v-card-actions>
@@ -175,6 +209,7 @@ export default {
         { text: 'Tangal Bayar', value: 'createdAt' },
       ],
       detailDialog: false,
+      detailTrans: null,
     }
   },
   watch: {
@@ -205,8 +240,10 @@ export default {
         nis: item.student.nis,
         name: item.student.name,
         class: item.student.class.name,
+        amountPay: item.amountPay
+          .toString()
+          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'),
         month: this.months[item.month],
-        // createdAt: item.createdAt | date
       }))
     },
   },
@@ -237,6 +274,7 @@ export default {
     async getDetaiTransaction(value) {
       console.log('value', value)
       this.detailDialog = true
+      this.detailTrans = value
     },
     async getStudentTransaction(id) {
       await Transaction.getTransactionsByStudentId(id).then((res) => {
@@ -300,7 +338,6 @@ export default {
       this.$refs.form.reset()
       this.opened = !this.opened
       this.student = []
-      this.detailDialog = !this.detailDialog
     },
   },
 }
