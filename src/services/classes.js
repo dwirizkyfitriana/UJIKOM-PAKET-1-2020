@@ -35,7 +35,7 @@ class Classes {
   static async addClass(data) {
     return new Promise((resolve, reject) => {
       const Tb = Parse.Object.extend('Classes')
-      let q = new Parse.Query(Tb)
+      let q = new Tb()
 
       q.set('name', data.name)
 

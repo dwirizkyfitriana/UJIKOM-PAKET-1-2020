@@ -5,7 +5,8 @@ import VueRouter from 'vue-router'
 import router from './router'
 import Vuex from 'vuex'
 import store from './store'
-import VueSweetalert2 from 'vue-sweetalert2';
+import VueSweetalert2 from 'vue-sweetalert2'
+import dayjs from 'dayjs'
 
 Vue.config.productionTip = false
 
@@ -17,6 +18,12 @@ Vue.use(Vuex)
 
 // sweetalert2
 Vue.use(VueSweetalert2)
+
+// dayjs
+Vue.filter('date', function (value) {
+  if (!value) return ''
+  return dayjs(value).format('DD MMM YYYY')
+})
 
 new Vue({
   vuetify,

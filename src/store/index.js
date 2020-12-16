@@ -8,6 +8,7 @@ import students from './studentStore'
 import majors from './majorStore'
 import classes from './classesStore'
 import years from './schoolYearsStore'
+import transaction from './transactionStore'
 
 Vue.use(Vuex)
 
@@ -19,5 +20,6 @@ export default new Vuex.Store({
     majors,
     classes,
     years,
+    transaction,
   },
 })

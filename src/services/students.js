@@ -36,7 +36,7 @@ class Students {
   static async addStudent(data) {
     return new Promise((resolve, reject) => {
       const Tb = Parse.Object.extend('Student')
-      let q = new Parse.Query(Tb)
+      let q = new Tb()
 
       q.set('nis', data.nis)
       q.set('name', data.name)

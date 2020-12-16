@@ -161,7 +161,7 @@
 </template>
 
 <script>
-import Operators from '../../services/oprators'
+import Operators from '../../services/operators'
 
 export default {
   data() {

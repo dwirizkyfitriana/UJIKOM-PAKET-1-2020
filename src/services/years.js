@@ -35,7 +35,7 @@ class Years {
   static async addSchoolYears(data) {
     return new Promise((resolve, reject) => {
       const Tb = Parse.Object.extend('SchoolYears')
-      let q = new Parse.Query(Tb)
+      let q = new Tb()
 
       q.set('year', data.year)
       q.set('amountPaid', data.amountPaid)

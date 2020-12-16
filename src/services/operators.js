@@ -48,7 +48,7 @@ class Operators {
       user.set('status', 1)
       user.set('level', data.level)
 
-      user.signUp().then((res) => {
+      user.save(null, {useMasterKey: true}).then((res) => {
           console.log('new operator', res)
           resolve(JSON.parse(JSON.stringify(res)))
         }, (err) => {

@@ -40,7 +40,7 @@ class Majors {
   static async addMajor(data) {
     return new Promise((resolve, reject) => {
       const Tb = Parse.Object.extend('Majors')
-      let q = new Parse.Query(Tb)
+      let q = new Tb()
 
       q.set('name', data.name)
       q.set('code', data.code)
