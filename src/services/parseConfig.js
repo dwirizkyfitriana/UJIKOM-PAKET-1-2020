@@ -1,9 +1,9 @@
 let Parse = require('parse')
 
-const ParseURL = 'https://parseapi.back4app.com/parse'
-const ParseAppId = 'UL9Pq2EaFmgdRtHIKiIWJeawi8620kHWJn7smqMu'
-const ParseJSKey = 'NfzIfMmSreQKQ6JgnlDZgR8ksMnCs5eZfXTYufH6'
-const ParseMasterKey = 'LYVIDbFHeJKqON9dqlOCUwsB5kiZIL4hSx5FLFpg'
+const ParseURL = process.env.VUE_APP_SERVER_URL
+const ParseAppId = process.env.VUE_APP_APP_ID
+const ParseJSKey = process.env.VUE_APP_JS_KEY
+const ParseMasterKey = process.env.VUE_APP_MASTER_KEY
 
 let isInit = false;
 

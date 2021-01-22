@@ -98,7 +98,7 @@
     >
       <v-card>
         <v-card-title>
-          <span class="headline">Detai Transaksi</span>
+          <span class="headline">Detail Transaksi</span>
         </v-card-title>
         <v-card-text>
           <v-container>
