@@ -9,6 +9,7 @@
 
 <script>
 import Navigation from './views/Navigation'
+
 export default {
   name: 'App',
   components: {

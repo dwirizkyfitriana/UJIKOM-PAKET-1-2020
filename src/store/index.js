@@ -2,24 +2,24 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // import modules
-import auth from './authStore'
-import operators from './operatorStore'
-import students from './studentStore'
-import majors from './majorStore'
-import classes from './classesStore'
-import years from './schoolYearsStore'
-import transaction from './transactionStore'
+import auth from './modules/authStore'
+import operators from './modules/operatorStore'
+import students from './modules/studentStore'
+import majors from './modules/majorStore'
+import classes from './modules/classesStore'
+import years from './modules/schoolYearsStore'
+import transaction from './modules/transactionStore'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    auth,
-    operators,
-    students,
-    majors,
-    classes,
-    years,
-    transaction,
+    auth: auth,
+    operators: operators,
+    students: students,
+    majors: majors,
+    classes: classes,
+    years: years,
+    transaction: transaction,
   },
 })

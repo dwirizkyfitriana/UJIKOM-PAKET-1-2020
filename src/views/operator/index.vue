@@ -10,13 +10,13 @@
         clearable
       ></v-text-field>
       <div class="ml-5">
-        <v-btn color="blue" class="white--text" @click="dialog = !dialog"
+        <v-btn color="blue" class="white--text" @click="openDialog()"
           >Tambah</v-btn
         >
       </div>
     </v-card-title>
     <v-card class="ma-5" elevation="10">
-      <v-data-table :headers="headers" :items="items" :search="search">
+      <v-data-table :headers="headers" :items="operators" :search="search">
         <template v-slot:item="props">
           <tr>
             <td>{{ props.item.name }}</td>
@@ -28,7 +28,7 @@
                 small
                 class="mr-2"
                 color="primary"
-                @click="edit(props.item.objectId)"
+                @click="openDialog('update', props.item)"
               >
                 mdi-pencil
               </v-icon>
@@ -58,13 +58,12 @@
                     label="Nama Petugas"
                     v-model="inputData.name"
                     :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMinName,
-                      inputData.rules.counterMax,
+                      rules.required,
+                      rules.counterMinName,
+                      rules.counterMax,
                     ]"
                     counter
                     clearable
-                    required
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
@@ -72,8 +71,8 @@
                     label="Username"
                     v-model="inputData.username"
                     :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMinName,
+                      rules.required,
+                      rules.counterMinName,
                     ]"
                     counter
                     clearable
@@ -84,7 +83,7 @@
                   <v-text-field
                     label="Email"
                     v-model="inputData.email"
-                    :rules="[inputData.rules.required, inputData.rules.email]"
+                    :rules="[rules.required, rules.email]"
                     clearable
                     required
                   ></v-text-field>
@@ -94,33 +93,33 @@
                     label="Password"
                     v-model="inputData.password"
                     :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMin,
+                      rules.required,
+                      rules.counterMin,
                     ]"
                     :append-icon="
-                      inputData.showPass ? 'mdi-eye' : 'mdi-eye-off'
+                      showPass ? 'mdi-eye' : 'mdi-eye-off'
                     "
-                    :type="inputData.showPass ? 'text' : 'password'"
+                    :type="showPass ? 'text' : 'password'"
                     clearable
-                    @click:append="inputData.showPass = !inputData.showPass"
+                    @click:append="showPass = !showPass"
                     required
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
                     label="Confirm Password"
-                    v-model="inputData.confirmPassword"
+                    v-model="confirmPassword"
                     :rules="[
-                      inputData.rules.required,
-                      inputData.rules.counterMin,
-                      inputData.rules.passConfirm,
+                      rules.required,
+                      rules.counterMin,
+                      rules.passConfirm,
                     ]"
                     :append-icon="
-                      inputData.showPass2 ? 'mdi-eye' : 'mdi-eye-off'
+                      showPass2 ? 'mdi-eye' : 'mdi-eye-off'
                     "
-                    :type="inputData.showPass2 ? 'text' : 'password'"
+                    :type="showPass2 ? 'text' : 'password'"
                     clearable
-                    @click:append="inputData.showPass2 = !inputData.showPass2"
+                    @click:append="showPass2 = !showPass2"
                     required
                   ></v-text-field>
                 </v-col>
@@ -129,7 +128,7 @@
                     :items="['Admin', 'Petugas']"
                     v-model="inputData.level"
                     label="Level"
-                    :rules="[inputData.rules.required]"
+                    :rules="[rules.required]"
                     clearable
                     required
                   ></v-select>
@@ -140,20 +139,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="reset()">
-            Close
-          </v-btn>
-          <v-btn
-            v-if="update == false"
-            color="blue darken-1"
-            text
-            @click="register()"
-          >
-            Save
-          </v-btn>
-          <v-btn v-else color="blue darken-1" text @click="editData()">
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="reset()">Close</v-btn>
+          <v-btn v-if="update == false" color="blue darken-1" text @click="register()" > Save </v-btn>
+          <v-btn v-else color="blue darken-1" text @click="editData()"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -161,12 +149,12 @@
 </template>
 
 <script>
-import Operators from '../../services/operators'
+/* eslint-disable */
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
-      items: [],
       headers: [
         { text: 'Nama', value: 'name' },
         { text: 'Username', value: 'username' },
@@ -179,14 +167,15 @@ export default {
       valid: true,
       update: false,
       inputData: {
-        id: '',
+        objectId: '',
         name: '',
         username: '',
         email: '',
         password: '',
-        confirmPassword: '',
         level: '',
-        rules: {
+      },
+      confirmPassword: '',
+      rules: {
           required: (v) => !!v || 'Required.',
           counterMax: (v) => (v && v.length) <= 50 || 'Max 50 characters',
           counterMin: (v) => (v && v.length) >= 8 || 'Min 8 characters',
@@ -197,70 +186,55 @@ export default {
           },
           passConfirm: (v) =>
             v === this.inputData.password || 'Passwords do not match',
-        },
-        showPass: false,
-        showPass2: false,
       },
+      showPass: false,
+      showPass2: false,
     }
   },
-  mounted() {
-    console.log('stored data operators', this.$store.getters['operators/getAllOperators'])
-    if(this.$store.getters['operators/getAllOperators'] == null){
-      this.getAllData()
-    }
-    else this.items = this.$store.getters['operators/getAllOperators']
+  computed: {
+    ...mapGetters({
+      operators: 'operators/getOperators'
+    })
+  },
+  async mounted() {
+    await this.$store.dispatch('operators/fetchOperators')
   },
   methods: {
-    async getAllData() {
-      let res = await Operators.getAllOperators()
-      console.log(res)
-      this.$store.commit('operators/SET_ALL_OPERATORS', res)
-      this.items = this.$store.getters['operators/getAllOperators']
-    },
-    async register() {
-      await Operators.addOperator(this.inputData).then((res) => {
-        this.$swal('Berhasil', `Petugas ${res.name} berhasil diubah, silahkan cek email anda pada bagian PROMOSI`, 'success')
-      })
-      this.reset()
-    },
-    async edit(id) {
-      console.log(id)
-      this.update = true
-      this.dialog = !this.dialog
-      await Operators.getOperatorById(id).then((res) => {
-        this.inputData.id = id
-        this.inputData.name = res.name
-        this.inputData.username = res.username
-        this.inputData.email = res.email
-      })
-    },
-    async editData() {
-      await Operators.updateOperator(this.inputData).then((res) => {
-        this.$swal('Berhasil', `Petugas ${res.name} berhasil diedit, silahkan cek email anda pada bagian PROMOSI`, 'success')
-      })
-      this.reset()
-      this.getAllData()
-    },
-    deleteData(id) {
-      this.$swal({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await Operators.deleteOperator(id)
-          this.$swal('Deleted!', 'Operator has been deleted.', 'success')
-          this.getAllData()
+    openDialog: async function(type = 'new', data){
+      this.dialog = true
+      if(type == 'update'){
+        console.log(data)
+        this.update = true
+        for (const key in this.inputData) {
+          this.inputData[key] = data[key]
         }
-      })
+      }
     },
-    reset() {
+    register: async function() {
+      await this.$store.dispatch('operators/addOperator', this.inputData)
+      this.reset()
+    },
+    editData: async function() {
+      await this.$store.dispatch('operators/updateOperator', this.inputData)
+      this.reset()
+    },
+    deleteData: async function(objectId) {
+      this.$swal({
+          title: 'Apakah Anda yakin ingin menghapus?',
+          showCancelButton: true,
+          cancelButtonText: 'Tidak',
+          confirmButtonText: 'Ya',
+          showLoaderOnConfirm: true,
+          preConfirm: async () => {
+            await this.$store.dispatch('operators/deleteOperator', objectId)
+            this.$swal("Berhasil", "Petugas Berhasil dihapus", "success")
+          }
+        })
+    },
+    reset: function() {
       this.$refs.form.reset()
       this.dialog = false
+      this.update = false
     },
   },
 }

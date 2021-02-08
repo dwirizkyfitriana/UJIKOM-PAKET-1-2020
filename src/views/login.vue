@@ -23,7 +23,7 @@
                   <v-layout row wrap>
                     <v-flex xs12 md12>
                       <v-text-field
-                        v-model="username"
+                        v-model="inputs.username"
                         label="Username"
                         :rules="[rules.required]"
                         required
@@ -32,7 +32,7 @@
                     </v-flex>
                     <v-flex xs12 md12>
                       <v-text-field
-                        v-model="password"
+                        v-model="inputs.password"
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :rules="[rules.required, rules.min]"
                         :type="showPassword ? 'text' : 'password'"
@@ -65,13 +65,14 @@
 </template>
 
 <script>
-import Auth from '../services/authentication'
 export default {
   data: () => ({
     valid: true,
-    username: '',
+    inputs: {
+      username: '',
+      password: '',
+    },
     showPassword: false,
-    password: '',
     rules: {
       required: v => !!v || 'Required',
       min: v => (v && v.length) >= 8 || 'Min 8 karakter',
@@ -82,11 +83,9 @@ export default {
   methods: {
     async login() {
       if (this.$refs.form.validate()) {
-        await Auth.login(this.username, this.password).then((res) => {
-          this.$swal('Berhasil', 'Anda Berhasil Login', 'success')
-          this.$router.push('/dashboard')
-          console.log(res)
-        })
+        await this.$store.dispatch('auth/login', this.inputs)
+        this.$swal('Berhasil', 'Anda Berhasil Login', 'success')
+        this.$router.push('/dashboard')
       }
     },
     reset() {

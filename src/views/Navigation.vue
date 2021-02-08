@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import Auth from '../services/authentication'
 export default {
   data() {
     return {
@@ -107,11 +106,9 @@ export default {
   },
   methods: {
     async logout(){
-      await Auth.logout().then((res) => {
-          this.$swal('Keluar', 'Anda Berhasil Logout.', 'success')
-          this.$router.push('/login')
-          console.log(res)
-        })
+      await this.$store.dispatch('auth/logout')
+      this.$swal('Keluar', 'Anda Berhasil Logout.', 'success')
+      this.$router.push('/login')
     }
   }
 }
