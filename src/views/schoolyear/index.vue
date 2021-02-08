@@ -10,19 +10,19 @@
         clearable
       ></v-text-field>
       <div class="ml-5">
-        <v-btn color="blue" class="white--text" @click="dialog = !dialog"
+        <v-btn color="blue" class="white--text" @click="openDialog()"
           >Tambah</v-btn
         >
       </div>
     </v-card-title>
     <v-card class="ma-5 pa-5 pt-0" elevation="10">
-      <v-data-table :headers="headers" :items="items" :search="search">
+      <v-data-table :headers="headers" :items="schoolYears" :search="search">
         <template v-slot:item="props">
           <tr>
             <td>{{ props.item.year }}</td>
             <td>{{ props.item.amountPaid }}</td>
             <td>
-              <v-icon small class="mr-2" color="primary" @click="edit(props.item.objectId)">
+              <v-icon small class="mr-2" color="primary" @click="openDialog('update',props.item)">
                 mdi-pencil
               </v-icon>
               <v-icon
@@ -50,7 +50,7 @@
                   <v-text-field
                     label="Tahun Masuk"
                     v-model="inputData.year"
-                    :rules="[inputData.rules.required]"
+                    :rules="[rules.required]"
                     type="number"
                     class="inputNumber"
                     clearable
@@ -61,7 +61,7 @@
                   <v-text-field
                     label="Biaya SPP"
                     v-model="inputData.amountPaid"
-                    :rules="[inputData.rules.required]"
+                    :rules="[rules.required]"
                     type="number"
                     class="inputNumber"
                     clearable
@@ -77,17 +77,7 @@
           <v-btn color="blue darken-1" text @click="reset()">
             Close
           </v-btn>
-          <v-btn
-            v-if="update == false"
-            color="blue darken-1"
-            text
-            @click="register()"
-          >
-            Save
-          </v-btn>
-          <v-btn v-else color="blue darken-1" text @click="editData()">
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="save()" > {{update ? 'Edit' : 'Simpan'}} </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -95,7 +85,7 @@
 </template>
 
 <script>
-import Years from '../../services/years'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -111,75 +101,60 @@ export default {
       valid: true,
       update: false,
       inputData: {
-        id: '',
+        objectId: '',
         year: '',
         amountPaid: '',
-        rules: {
-          required: (v) => !!v || 'Required.',
-        },
+      },
+      rules: {
+        required: (v) => !!v || 'Required.',
       },
     }
   },
+  computed: {
+    ...mapGetters({
+      schoolYears: 'years/getSchoolYears'
+    })
+  },
   async mounted() {
     // get all years
-    if(this.$store.getters['years/getAllYears'] == null){
-      this.getAllData()
-    }
-    else{
-      this.items = this.$store.getters['years/getAllYears']
-    }
+    await this.$store.dispatch('years/fetchSchoolYears')
   },
   methods: {
-    async getAllData() {
-      await Years.getAllSchoolYears().then((res) => {
-        console.log('data tahun ajaran', res)
-        this.$store.commit('years/SET_ALL_YEARS', res)
-        this.items = this.$store.getters['years/getAllYears']
-      })
+    openDialog: async function(type = 'new', data){
+      this.dialog = true
+      if(type == 'update') {
+        this.update = true
+        for (const key in this.inputData) {
+          this.inputData[key] = data[key]
+        }
+      }
     },
-    async register() {
-      await Years.addYears(this.inputData).then((res) => {
-        this.$swal('Berhasil', `Siswa ${res.name} berhasil ditambahkan`, 'success')
-      })
+    save: async function() {
+      if(this.update){
+        await this.$store.dispatch('years/updateSchoolYear', this.inputData)
+      }
+      else{
+        await this.$store.dispatch('years/addSchoolYear', this.inputData)
+      }
       this.reset()
     },
-    async edit(id) {
-      console.log(id)
-      this.update = true
-      this.dialog = !this.dialog
-      await Years.getSchoolyearById(id).then((res) => {
-        this.inputData.id = id
-        this.inputData.year = res.year
-        this.inputData.amountPaid = res.amountPaid
-      })
-    },
-    async editData() {
-      await Years.updateSchoolYears(this.inputData).then(() => {
-        this.$swal('Berhasil', 'Tahun Masuk berhasil diubah', 'success')
-      })
-      this.reset()
-      this.getAllData()
-    },
-    deleteData(id) {
+    deleteData: async function(objectId) {
       this.$swal({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
+        title: 'Apakah Anda yakin ingin menghapus?',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Years.deleteSchoolYears(id)
-          this.$swal('Deleted!', 'Years has been deleted.', 'success')
-          this.getAllData()
+        cancelButtonText: 'Tidak',
+        confirmButtonText: 'Ya',
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+          await this.$store.dispatch('years/deleteSchoolYears', objectId)
+          this.$swal("Berhasil", "Tahun Ajaran Berhasil dihapus", "success")
         }
       })
     },
     reset() {
       this.$refs.form.reset()
       this.dialog = false
+      this.update = false
     },
   },
 }
