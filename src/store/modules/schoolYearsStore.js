@@ -66,9 +66,10 @@ export default {
       addSchoolYear: async function(context, payload) {
         return new Promise((resolve, reject) => {
           const query = new Tb()
+
+          delete payload.objectId
   
           query.save({...payload, year: parseInt(payload.year), amountPaid: parseInt(payload.amountPaid)}).then(res => {
-            console.log(res)
             res = JSON.parse(JSON.stringify(res))
             console.log('new data', res)
             context.commit('UNSHIFT', ['schoolYears', res])
@@ -83,7 +84,6 @@ export default {
   
           context.dispatch('fetchSchoolyearById', payload.objectId).then(res => {
             res.save({...payload, year: parseInt(payload.year), amountPaid: parseInt(payload.amountPaid)}).then(response => {
-              console.log(response)
               response = JSON.parse(JSON.stringify(response))
               console.log('updated', response)
               context.commit('UPDATE', ['schoolYears', response])
@@ -99,7 +99,6 @@ export default {
   
           context.dispatch('fetchSchoolyearById', payload).then(res => {
             res.save({deletedAt: new Date()}).then(response => {
-              console.log(response)
               response = JSON.parse(JSON.stringify(response))
               console.log('deleted', response)
               context.commit('DELETE', ['schoolYears', response])
