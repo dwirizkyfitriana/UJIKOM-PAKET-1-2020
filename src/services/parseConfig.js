@@ -13,11 +13,11 @@ let init = async () => {
   }
 
   // console.log('Init Parse')
-  Parse.serverURL = ParseURL;
-  Parse.initialize(ParseAppId, ParseJSKey);
+  Parse.initialize(ParseAppId, ParseJSKey)
+  Parse.serverURL = ParseURL
   Parse.masterKey = ParseMasterKey
-  isInit = true;
-  return Parse;
+  isInit = true
+  return Parse
 };
 
 init();

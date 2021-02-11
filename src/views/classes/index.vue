@@ -10,19 +10,19 @@
         clearable
       ></v-text-field>
       <div class="ml-5">
-        <v-btn color="blue" class="white--text" @click="dialog = !dialog"
+        <v-btn color="blue" class="white--text" @click="openDialog()"
           >Tambah</v-btn
         >
       </div>
     </v-card-title>
     <v-card class="ma-5 pa-5 pt-0" elevation="10">
-      <v-data-table :headers="headers" :items="items" :search="search">
+      <v-data-table :headers="headers" :items="classes" :search="search">
         <template v-slot:item="props">
           <tr>
             <td>{{ props.item.name }}</td>
             <td>{{ props.item.major.name }}</td>
             <td>
-              <v-icon small class="mr-2" color="primary" @click="edit(props.item.objectId)">
+              <v-icon small class="mr-2" color="primary" @click="openDialog('update', props.item)">
                 mdi-pencil
               </v-icon>
               <v-icon
@@ -50,7 +50,7 @@
                   <v-text-field
                     label="Kelas"
                     v-model="inputData.name"
-                    :rules="[inputData.rules.required]"
+                    :rules="[rules.required]"
                     clearable
                     required
                   ></v-text-field>
@@ -63,7 +63,7 @@
                     v-model="inputData.major"
                     label="Kompetensi keahlian"
                     auto-select-first
-                    :rules="[inputData.rules.required]"
+                    :rules="[rules.required]"
                     clearable
                     required
                   ></v-autocomplete>
@@ -77,17 +77,7 @@
           <v-btn color="blue darken-1" text @click="reset()">
             Close
           </v-btn>
-          <v-btn
-            v-if="update == false"
-            color="blue darken-1"
-            text
-            @click="register()"
-          >
-            Save
-          </v-btn>
-          <v-btn v-else color="blue darken-1" text @click="editData()">
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="save()">{{update ? 'Edit' : 'Simpan'}}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -95,14 +85,11 @@
 </template>
 
 <script>
-import Classes from '../../services/classes'
-import Majors from '../../services/majors'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
-      items: [],
-      majors: [],
       headers: [
         { text: 'Kelas', value: 'name' },
         { text: 'kompetensi Keahlian', value: 'major' },
@@ -113,87 +100,62 @@ export default {
       valid: true,
       update: false,
       inputData: {
-        id: '',
+        objectId: '',
         name: '',
         major: '',
-        rules: {
-          required: (v) => !!v || 'Required.',
-        },
+      },
+      rules: {
+        required: (v) => !!v || 'Required.',
       },
     }
   },
+  computed: {
+    ...mapGetters({
+      classes: 'classes/getClasses',
+      majors: 'majors/getMajors'
+    })
+  },
   async mounted() {
-    // get all Classes
-    if(this.$store.getters['classes/getAllClasses'] == null){
-      this.getAllData()
-    }
-    else{
-      this.items = this.$store.getters['classes/getAllClasses']
-    }
-
-    // get all majors
-    if(this.$store.getters['majors/getAllMajors'] == null){
-      await Majors.getAllMajors().then((res) => {
-        this.$store.commit('majors/SET_ALL_MAJORS', res)
-        this.majors = res
-      })
-    }
-    else{
-      let res = this.$store.getters['majors/getAllMajors']
-      this.majors = res
-    }
+    await this.$store.dispatch('classes/fetchClasses')
+    await this.$store.dispatch('majors/fetchMajors')
   },
   methods: {
-    async getAllData() {
-      await Classes.getAllClasses().then((res) => {
-        console.log('data kelas', res)
-        this.$store.commit('classes/SET_ALL_CLASSES', res)
-        this.items = this.$store.getters['classes/getAllClasses']
-      })
+    openDialog: async function(type = 'new', data) {
+      this.dialog = true
+      if(type == 'update') {
+        this.update = true
+        console.log('DATA', data)
+        for(const key in this.inputData) {
+          this.inputData[key] = data[key]
+        }
+      }
     },
-    async register() {
-      await Classes.addClass(this.inputData).then((res) => {
-        this.$swal('Berhasil', `Kelas ${res.name} berhasil ditambahkan`, 'success')
-      })
+    save: async function() {
+      if(this.update) {
+        await this.$store.dispatch('classes/updateClass', this.inputData)
+      }
+      else {
+        await this.$store.dispatch('classes/addClass', this.inputData)
+      }
       this.reset()
     },
-    async edit(id) {
-      console.log(id)
-      this.update = true
-      this.dialog = !this.dialog
-      await Classes.getClassById(id).then((res) => {
-        this.inputData.id = id
-        this.inputData.name = res.name
-        this.inputData.major = res.major.objectId
-      })
-    },
-    async editData() {
-      await Classes.updateClass(this.inputData).then(() => {
-        this.$swal('Berhasil', 'Kelas berhasil diubah', 'success')
-      })
-      this.reset()
-      this.getAllData()
-    },
-    deleteData(id) {
+    deleteData: async function(objectId) {
       this.$swal({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
+        title: 'Apakah Anda yakin ingin menghapus?',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Classes.deleteClass(id)
-          this.$swal('Deleted!', 'Class has been deleted.', 'success')
-          this.getAllData()
+        cancelButtonText: 'Tidak',
+        confirmButtonText: 'Ya',
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+          await this.$store.dispatch('classes/deleteClass', objectId)
+          this.$swal("Berhasil", "Kelas berhasil dihapus", "success")
         }
       })
     },
     reset() {
       this.$refs.form.reset()
       this.dialog = false
+      this.update = false
     },
   },
 }
