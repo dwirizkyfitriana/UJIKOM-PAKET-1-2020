@@ -39,7 +39,7 @@ class Classes {
 
       q.set('name', data.name)
 
-      q.save.then((res) => {
+      q.save().then((res) => {
           console.log('new Class', res)
           resolve(JSON.parse(JSON.stringify(res)))
         }, (err) => {

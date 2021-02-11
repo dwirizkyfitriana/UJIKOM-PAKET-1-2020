@@ -45,7 +45,6 @@ export default {
         query.ascending('name')
 
         query.find().then(res => {
-          console.log(res)
           res = JSON.parse(JSON.stringify(res))
           console.log(res)
           context.commit('SET', ['majors', res])
@@ -71,8 +70,9 @@ export default {
       return new Promise((resolve, reject) => {
         const query = new Tb()
 
+        delete payload.objectId
+
         query.save({...payload, status: 1}).then(res => {
-          console.log(res)
           res = JSON.parse(JSON.stringify(res))
           console.log(res)
           context.commit('UNSHIFT', ['majors', res])
@@ -87,7 +87,6 @@ export default {
 
         context.dispatch('fetchMajorById', payload.objectId).then(res => {
           res.save({...payload}).then(response => {
-            console.log(response)
             response = JSON.parse(JSON.stringify(response))
             console.log(response)
             context.commit('UPDATE', ['majors', response])
@@ -103,7 +102,6 @@ export default {
 
         context.dispatch('fetchMajorById', payload).then(res => {
           res.save({status: 500, deletedAt: new Date()}).then(response => {
-            console.log(response)
             response = JSON.parse(JSON.stringify(response))
             console.log(response)
             context.commit('DELETE', ['majors', response])

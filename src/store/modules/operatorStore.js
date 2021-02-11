@@ -76,9 +76,10 @@ export default {
     addOperator: async function(context, payload) {
       return new Promise((resolve, reject) => {
         let user = new Parse.User()
+
+        delete payload.objectId
   
         user.save({...payload, type: 'operator', status: 1}, {useMasterKey: true}).then((res) => {
-          console.log(res)
           res = JSON.parse(JSON.stringify(res))
           console.log('new operator', res)
           context.commit('UNSHIFT', ['operators', res])

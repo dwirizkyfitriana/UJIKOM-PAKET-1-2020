@@ -45,7 +45,6 @@ export default {
           query.doesNotExist('deletedAt')
 
           query.find().then(res => {
-            console.log(res)
             res = JSON.parse(JSON.stringify(res))
             console.log('res', res)
             context.commit('SET', ['classes', res])
@@ -68,8 +67,9 @@ export default {
         return new Promise((resolve, reject) => {
           const query = new Tb()
 
+          delete payload.objectId
+
           query.save({...payload, major: {__type: 'Pointer', className: 'Majors', objectId: payload.major}}).then(res => {
-            console.log(res)
             res = JSON.parse(JSON.stringify(res))
 
             // fetch (include) major
@@ -90,7 +90,6 @@ export default {
           console.log('payload', payload)
           context.dispatch('fetchClassById', payload.objectId).then(res => {
             res.save({...payload, major: {__type: 'Pointer', className: 'Majors', objectId: payload.major.objectId}}).then(response => {
-              console.log(response)
               response = JSON.parse(JSON.stringify(response))
 
               // fetch (include) Major
@@ -111,7 +110,6 @@ export default {
         return new Promise((resolve, reject) => {
           context.dispatch('fetchClassById', payload).then(res => {
             res.save({deletedAt: new Date()}).then(response => {
-              console.log(response)
               response = JSON.parse(JSON.stringify(response))
               console.log('new', response)
               context.commit('DELETE', ['classes', response])
