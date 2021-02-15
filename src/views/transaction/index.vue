@@ -78,8 +78,8 @@
         Riwayat Transaksi
       </v-card-title>
       <v-data-table
-        :headers="historyHeaders"
-        :items="computedHistory"
+        :headers="transactionsHeaders"
+        :items="computedTransactions"
         @click:row="getDetaiTransaction"
         style="cursor: pointer"
       >
@@ -159,8 +159,8 @@
 </template>
 
 <script>
-import Students from '../../services/students'
-import Transaction from '../../services/transactions'
+/*eslint-disable*/
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -182,7 +182,6 @@ export default {
       opened: false,
       openedText: 'Tambah',
       showAdd: false,
-      students: [],
       search: '',
       showTable: false,
       student: [],
@@ -198,8 +197,7 @@ export default {
       showBills: false,
       studentTransaction: [],
       transStatus: [],
-      history: [],
-      historyHeaders: [
+      transactionsHeaders: [
         { text: 'NIS', value: 'nis' },
         { text: 'Nama Siswa', value: 'name' },
         { text: 'Kelas', value: 'class' },
@@ -215,9 +213,7 @@ export default {
   watch: {
     async search(val) {
       if (val) {
-        this.student = this.$store.getters['students/getAllStudents'].filter(
-          (item) => item.objectId == val
-        )
+        this.student = this.students.filter(item => item.objectId == val)
         await this.getStudentTransaction(val)
         this.showTable = true
         this.showBills = true
@@ -234,8 +230,13 @@ export default {
     },
   },
   computed: {
-    computedHistory() {
-      return this.history.map((item) => ({
+    ...mapGetters({
+      transactions: 'transactions/getTransactions',
+      studentTransactions: 'transactions/getStudentTransactions',
+      students: 'students/getStudents'
+    }),
+    computedTransactions() {
+      return this.transactions.map((item) => ({
         ...item,
         nis: item.student.nis,
         name: item.student.name,
@@ -247,56 +248,35 @@ export default {
       }))
     },
   },
-  mounted() {
-    if (this.$store.getters['students/getAllStudents'] == null) {
-      this.getAllStudents()
-    } else this.students = this.$store.getters['students/getAllStudents']
-
-    if (this.$store.getters['transaction/getAllTransactions'] == null) {
-      this.getAllTransactions()
-    } else this.history = this.$store.getters['transaction/getAllTransactions']
+  async mounted() {
+    await this.$store.dispatch('transactions/fetchTransactions')
+    await this.$store.dispatch('students/fetchStudents')
   },
   methods: {
-    async getAllStudents() {
-      await Students.getAllStudents().then((res) => {
-        console.log('stud', res)
-        this.$store.commit('students/SET_ALL_STUDENTS', res)
-        this.students = this.$store.getters['students/getAllStudents']
-      })
+    openAdd: function() {
+      this.showAdd = !this.showAdd
+      this.showBills = false
+      this.reset()
     },
-    async getAllTransactions() {
-      await Transaction.getAllTransactions().then((res) => {
-        console.log('trans', res)
-        this.$store.commit('transaction/SET_ALL_TRANSACTIONS', res)
-        this.history = this.$store.getters['transaction/getAllTransactions']
-      })
+    addTransaction: async function(month) {
+      let params = {
+        month: month,
+        student: this.student[0].objectId,
+        amountPay: this.student[0].schoolYears.amountPaid
+      }
+      console.log(params)
+      await this.$store.dispatch('transactions/addTransaction', params)
+      this.reset()
     },
-    async getDetaiTransaction(value) {
+    getDetaiTransaction: function(value) {
       console.log('value', value)
       this.detailDialog = true
       this.detailTrans = value
     },
-    async getStudentTransaction(id) {
-      await Transaction.getTransactionsByStudentId(id).then((res) => {
-        console.log('stud trans', res)
-        this.studentTransaction = res
-        this.transStatus = this.studentTransaction.map((item) => item.statusid)
-        console.log(this.transStatus)
-      })
-    },
-    async addTransaction(month) {
-      console.log('month', month)
-      console.log('data', this.student[0])
-      await Transaction.addTransaction(month, this.student[0]).then((res) => {
-        console.log('added', res)
-      })
-      await this.getAllTransactions()
-      await this.getStudentTransaction(this.student[0].objectId)
-    },
-    openAdd() {
-      this.showAdd = !this.showAdd
-      this.showBills = false
-      this.reset()
+    getStudentTransaction: async function(id) {
+      await this.$store.dispatch('transactions/fetchStudentTransactions', id)
+      this.transStatus = this.studentTransactions.map(item => item.statusid)
+      console.log(id)
     },
     getBadge(statusid) {
       switch (statusid) {
@@ -336,7 +316,7 @@ export default {
     },
     reset() {
       this.$refs.form.reset()
-      this.opened = !this.opened
+      this.opened = false
       this.student = []
     },
   },
