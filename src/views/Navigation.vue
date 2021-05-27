@@ -31,7 +31,7 @@
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" color="#3c4b64" dark fixed app>
       <v-toolbar flat color="#3c4b64">
-        <img src="../assets/logo.svg" alt="Spp-Logo" width="30" height="30" />
+        <img src="../assets/smk1logo.png" alt="Spp-Logo" width="30" height="30" />
         Aplikasi Pembayaran SPP
       </v-toolbar>
       <v-list>
