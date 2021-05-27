@@ -11,6 +11,7 @@ import Majors from '../views/majors'
 import Classes from '../views/classes'
 import Transaction from '../views/transaction'
 import Report from '../views/report'
+import NotFoundPage from '../views/404Page'
 
 Vue.use(VueRouter)
 
@@ -94,7 +95,7 @@ const router = new VueRouter({
     {
       path: '*',
       name: 'Not Found',
-      component: Report,
+      component: NotFoundPage,
     },
   ],
 })
