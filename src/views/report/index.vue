@@ -20,6 +20,7 @@ import dayjs from 'dayjs'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import stmLogo from '../../assets/smk1logo.png'
+import PDF from '../../global/pdf'
 
 export default {
     data() {
@@ -63,26 +64,26 @@ export default {
         generatePdf: function() {
             const doc = new jsPDF()
 
-            doc.orientation = 'portrait'
-            doc.format = 'a4'
+            doc.orientation = PDF.ORIENTATION
+            doc.format = PDF.FORMAT
 
             doc.addImage(stmLogo, 'PNG', 10, 10, 35, 35)
 
             doc.setFont('helvetica', '', 'bold')
                 .setFontSize(16)
-                .text('SEKOLAH MENENGAH KEJURUAN NEGERI 1 CIMAHI', 50, 18)
+                .text(PDF.HEADER_TITLE, 50, 18)
             doc.setFont('helvetica', '', 'normal')
                 .setFontSize(12)
-                .text('Jalan Mahar Martanegara No. 48 Leuwigajah, Telp./Fax. (022) 662983', 58, 25)
-            doc.setFontSize(12).text('Website : https://www.smkn1-cmi.sch.id - e-mail : info@.smkn1-cmi.sch.id', 55, 32)
-            doc.setFontSize(12).text('Kota Cimahi 40533', 100, 39)
+                .text(PDF.HEADER_ADDRESS, 58, 25)
+            doc.setFontSize(12).text(PDF.HEADER_CONTACT, 55, 32)
+            doc.setFontSize(12).text(PDF.HEADER_POSTAL_CODE, 100, 39)
 
             doc.setLineWidth(0.9).line(10, 48, 200, 48)
             doc.setLineWidth(0.01).line(10, 49, 200, 49)
 
-            doc.setFontSize(12).text('Laporan Pembayaran SPP Siswa/i SMKN 1 Cimahi', 15, 60)
+            doc.setFontSize(12).text(PDF.BODY_TITLE, 15, 60)
 
-            let headers = ['No.', 'NIS', 'Nama Siswa', 'Kelas', 'Kode', 'Bulan', 'Jumlah', 'Tangal']
+            let headers = PDF.TABLE_HEADERS
             let rows = []
             let source = this.$refs['trx']
             let i = 0
@@ -93,7 +94,7 @@ export default {
 
             doc.autoTable(headers, rows, { theme: 'grid', styles: { fillColor: null, textColor: 'black', lineColor: 'black' }, startY: 65 })
 
-            doc.save('laporan_' + Date.now() + '.pdf')
+            doc.save(PDF.FILE_TITLE)
         },
     },
 }
