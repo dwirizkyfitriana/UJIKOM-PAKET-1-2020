@@ -91,6 +91,11 @@ const router = new VueRouter({
         requiresAuth: true
       }
     },
+    {
+      path: '*',
+      name: 'Not Found',
+      component: Report,
+    },
   ],
 })
 
