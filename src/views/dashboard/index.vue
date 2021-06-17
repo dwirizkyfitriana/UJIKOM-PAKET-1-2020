@@ -45,7 +45,7 @@ export default {
             transactions: 'transactions/getTransactions',
         }),
     },
-    async created() {
+    async mounted() {
         // get all students
         await this.$store.dispatch('students/fetchStudents')
 
@@ -60,8 +60,7 @@ export default {
 
         // get all transactions
         await this.$store.dispatch('transactions/fetchTransactions')
-    },
-    mounted() {
+
         this.cards[0].total = this.schoolYears.length
         this.cards[1].total = this.students.length
         this.cards[2].total = this.majors.length
