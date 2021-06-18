@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-card-title>
+    <loading-page v-if="loading"></loading-page>
+    <v-card-title v-if="!loading">
       Transaksi Spp
       <v-spacer></v-spacer>
       <div class="ml-5">
@@ -9,7 +10,7 @@
         }}</v-btn>
       </div>
     </v-card-title>
-    <v-card class="ma-5 pa-5" v-show="showAdd">
+    <v-card class="ma-5 pa-5" v-show="showAdd" v-if="!loading">
       <v-form ref="form" class="pa-5">
         <v-autocomplete
           :items="students"
@@ -161,8 +162,12 @@
 <script>
 /*eslint-disable*/
 import { mapGetters } from 'vuex'
+import LoadingPage from '../../components/LoadingPage'
 
 export default {
+  components: {
+    LoadingPage,
+  },
   data() {
     return {
       months: [
@@ -208,6 +213,7 @@ export default {
       ],
       detailDialog: false,
       detailTrans: null,
+      loading: true
     }
   },
   watch: {
@@ -251,6 +257,8 @@ export default {
   async mounted() {
     await this.$store.dispatch('transactions/fetchTransactions')
     await this.$store.dispatch('students/fetchStudents')
+
+    this.loading = false
   },
   methods: {
     openAdd: function() {

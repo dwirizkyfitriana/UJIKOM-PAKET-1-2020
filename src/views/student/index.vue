@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-card-title>
+    <loading-page v-if="loading"></loading-page>
+    <v-card-title v-if="!loading">
       Data Siswa
       <v-spacer></v-spacer>
       <v-text-field
@@ -15,7 +16,7 @@
         >
       </div>
     </v-card-title>
-    <v-card class="ma-5 pa-5 pt-0" elevation="10">
+    <v-card class="ma-5 pa-5 pt-0" elevation="10" v-if="!loading">
       <v-row>
         <v-autocomplete class="ma-5" :items="filteredMajor ? filteredMajor : majors" item-text="name" item-value="objectId" label="Pilih Jurusan" v-model="major" auto-select-first clearable></v-autocomplete>
         <v-autocomplete class="ma-5" :items="filteredClass ? filteredClass : classes" item-text="name" item-value="objectId" label="Pilih Kelas" v-model="klass" auto-select-first clearable></v-autocomplete>
@@ -146,8 +147,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import LoadingPage from '../../components/LoadingPage'
 
 export default {
+  components: {
+    LoadingPage,
+  },
   data() {
     return {
       filteredStudent: null,
@@ -185,6 +190,7 @@ export default {
       rules: {
         required: (v) => !!v || 'Required.',
       },
+      loading: true
     }
   },
   watch: {
@@ -250,6 +256,8 @@ export default {
 
     // get all schoolYears
     await this.$store.dispatch('years/fetchSchoolYears')
+
+    this.loading = false
 
   },
   methods: {

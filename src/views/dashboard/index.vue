@@ -1,9 +1,10 @@
 <template>
     <v-app>
-        <v-card-title>
+        <loading-page v-if="loading"></loading-page>
+        <v-card-title v-if="!loading">
             Dashboard
         </v-card-title>
-        <v-row class="ma-3">
+        <v-row class="ma-3" v-if="!loading">
             <v-col cols="4" v-for="(card, i) in cards" :key="i">
                 <v-card class="pt-5 pb-5 pr-6 pl-6" elevation="2" shaped>
                     <v-row>
@@ -23,7 +24,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import LoadingPage from '../../components/LoadingPageDashboard.vue'
 export default {
+    components: {
+        LoadingPage
+    },
     data() {
         return {
             cards: [
@@ -34,6 +39,7 @@ export default {
                 { title: 'Transaksi', total: 0 },
                 { title: 'Pemasukan', total: 0 },
             ],
+            loading: true
         }
     },
     computed: {
@@ -72,6 +78,8 @@ export default {
             total += element.amountPay
         })
         this.cards[5].total = this.convertToRupiah(total)
+
+        this.loading = false
     },
     methods: {
         convertToRupiah: function(angka) {

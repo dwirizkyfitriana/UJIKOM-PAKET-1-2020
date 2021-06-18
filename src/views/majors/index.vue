@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-card-title>
+    <loading-page v-if="loading"></loading-page>
+    <v-card-title v-if="!loading">
       Data Kompetensi Keahlian
       <v-spacer></v-spacer>
       <v-text-field
@@ -15,7 +16,7 @@
         >
       </div>
     </v-card-title>
-    <v-card class="ma-5" elevation="10">
+    <v-card class="ma-5" elevation="10" v-if="!loading">
       <v-data-table :headers="headers" :items="majors" :search="search">
         <template v-slot:item="props">
           <tr>
@@ -84,8 +85,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import LoadingPage from '../../components/LoadingPage'
 
 export default {
+  components: {
+    LoadingPage,
+  },
   data() {
     return {
       headers: [
@@ -105,6 +110,7 @@ export default {
       rules: {
         required: (v) => !!v || 'Required.',
       },
+      loading: true
     }
   },
   computed: {
@@ -114,6 +120,7 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('majors/fetchMajors')
+    this.loading = false
   },
   methods: {
     openDialog: async function(type = 'new', data) {

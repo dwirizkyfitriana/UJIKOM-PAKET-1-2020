@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-card-title>
+    <loading-page v-if="loading"></loading-page>
+    <v-card-title v-if="!loading">
       Data Siswa
       <v-spacer></v-spacer>
       <v-text-field
@@ -15,7 +16,7 @@
         >
       </div>
     </v-card-title>
-    <v-card class="ma-5 pa-5 pt-0" elevation="10">
+    <v-card class="ma-5 pa-5 pt-0" elevation="10" v-if="!loading">
       <v-data-table :headers="headers" :items="schoolYears" :search="search">
         <template v-slot:item="props">
           <tr>
@@ -86,8 +87,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import LoadingPage from '../../components/LoadingPage'
 
 export default {
+  components: {
+    LoadingPage,
+  },
   data() {
     return {
       items: [],
@@ -108,6 +113,7 @@ export default {
       rules: {
         required: (v) => !!v || 'Required.',
       },
+      loading: true
     }
   },
   computed: {
@@ -118,6 +124,7 @@ export default {
   async mounted() {
     // get all years
     await this.$store.dispatch('years/fetchSchoolYears')
+    this.loading = false
   },
   methods: {
     openDialog: async function(type = 'new', data){

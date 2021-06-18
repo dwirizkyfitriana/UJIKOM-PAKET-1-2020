@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-card-title>
+    <loading-page v-if="loading"></loading-page>
+    <v-card-title v-if="!loading">
       Data Petugas
       <v-spacer></v-spacer>
       <v-text-field
@@ -15,7 +16,7 @@
         >
       </div>
     </v-card-title>
-    <v-card class="ma-5" elevation="10">
+    <v-card class="ma-5" elevation="10" v-if="!loading">
       <v-data-table :headers="headers" :items="operators" :search="search">
         <template v-slot:item="props">
           <tr>
@@ -151,8 +152,12 @@
 <script>
 /* eslint-disable */
 import { mapGetters } from 'vuex'
+import LoadingPage from '../../components/LoadingPage'
 
 export default {
+  components: {
+    LoadingPage,
+  },
   data() {
     return {
       headers: [
@@ -189,6 +194,7 @@ export default {
       },
       showPass: false,
       showPass2: false,
+      loading: true
     }
   },
   computed: {
@@ -198,6 +204,7 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('operators/fetchOperators')
+    this.loading = false
   },
   methods: {
     openDialog: async function(type = 'new', data){

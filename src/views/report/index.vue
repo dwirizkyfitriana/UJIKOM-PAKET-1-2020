@@ -1,7 +1,8 @@
 <template>
     <v-app>
-        <v-card-title>Laporan</v-card-title>
-        <v-card class="ma-5">
+        <loading-page v-if="loading"></loading-page>
+        <v-card-title v-if="!loading">Laporan</v-card-title>
+        <v-card class="ma-5" v-if="!loading">
             <v-card-title>
                 Transaksi
                 <v-spacer></v-spacer>
@@ -21,8 +22,12 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import stmLogo from '../../assets/smk1logo.png'
 import PDF from '../../global/pdf'
+import LoadingPage from '../../components/LoadingPage'
 
 export default {
+  components: {
+    LoadingPage,
+  },
     data() {
         return {
             search: null,
@@ -36,6 +41,7 @@ export default {
                 { text: 'Jumlah Bayar', value: 'amountPay' },
                 { text: 'Tangal Bayar', value: 'createdAt' },
             ],
+            loading: true
         }
     },
     computed: {
@@ -56,6 +62,8 @@ export default {
     },
     async mounted() {
         await this.$store.dispatch('transactions/fetchTransactions')
+
+        this.loading = false
     },
     methods: {
         downloadPdf: function() {
