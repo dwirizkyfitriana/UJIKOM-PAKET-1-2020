@@ -36,7 +36,7 @@
       </v-toolbar>
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
+          v-for="(item, i) in computedItems"
           :key="i"
           :to="item.to"
           router
@@ -65,43 +65,57 @@ export default {
           icon: 'mdi-view-dashboard-outline',
           title: 'Dashboard',
           to: '/dashboard',
+          role: ['Admin', 'Petugas']
         },
         {
           icon: 'mdi-account-outline',
           title: 'Data Petugas',
           to: '/operator',
+          role: ['Admin']
         },
         {
           icon: 'mdi-calendar-range',
           title: 'Tahun Ajaran',
           to: '/school-years',
+          role: ['Admin', 'Petugas']
         },
         {
           icon: 'mdi-account-group-outline',
           title: 'Data Siswa',
           to: '/student',
+          role: ['Admin', 'Petugas']
         },
         {
           icon: 'mdi-school-outline',
           title: 'Kompetensi Keahlian',
           to: '/majors',
+          role: ['Admin', 'Petugas']
         },
         {
           icon: 'mdi-google-classroom',
           title: 'Kelas',
           to: '/classes',
+          role: ['Admin', 'Petugas']
         },
         {
           icon: 'mdi-finance',
           title: 'Transaksi Spp',
           to: '/transaction',
+          role: ['Admin', 'Petugas']
         },
         {
           icon: 'mdi-clipboard-text-outline',
           title: 'Laporan',
           to: '/report',
+          role: ['Admin']
         },
       ],
+    }
+  },
+  computed: {
+    computedItems: function() {
+      let role = localStorage.getItem('level')
+      return this.items.filter((item) => item.role.indexOf(role) !== -1)
     }
   },
   methods: {
