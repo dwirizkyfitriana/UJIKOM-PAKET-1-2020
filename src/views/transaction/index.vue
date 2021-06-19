@@ -303,6 +303,7 @@ export default {
             }
             console.log(params)
             await this.$store.dispatch('transactions/addTransaction', params)
+            this.snackbar('Transaksi berhasil', 'success', 3000)
             this.reset()
         },
         getDetaiTransaction: function(value) {

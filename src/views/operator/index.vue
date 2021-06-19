@@ -241,6 +241,7 @@ export default {
         },
         register: async function() {
             await this.$store.dispatch('operators/addOperator', this.inputData)
+            this.snackbar('Petugas berhasil ditambah', 'success', 3000)
             this.reset()
         },
         editData: async function() {
@@ -248,6 +249,7 @@ export default {
                 'operators/updateOperator',
                 this.inputData
             )
+            this.snackbar('Petugas berhasil diubah', 'success', 3000)
             this.reset()
         },
         deleteData: async function(objectId) {

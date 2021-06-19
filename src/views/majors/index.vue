@@ -142,8 +142,10 @@ export default {
         save: async function() {
             if (this.update) {
                 await this.$store.dispatch('majors/updateMajor', this.inputData)
+                this.snackbar('Kompetensi keahlian berhasil diubah', 'success', 3000)
             } else {
                 await this.$store.dispatch('majors/addMajor', this.inputData)
+                this.snackbar('Kompetensi keahlian berhasil ditambah', 'success', 3000)
             }
             this.reset()
         },

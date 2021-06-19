@@ -317,11 +317,13 @@ export default {
                     'student/updateStudent',
                     this.inputData
                 )
+                this.snackbar('Siswa berhasil diubah', 'success', 3000)
             } else {
                 await this.$store.dispatch(
                     'students/addStudent',
                     this.inputData
                 )
+                this.snackbar('Siswa berhasil ditambah', 'success', 3000)
             }
             this.reset()
         },

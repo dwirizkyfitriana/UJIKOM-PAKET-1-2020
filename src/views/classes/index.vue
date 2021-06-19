@@ -151,8 +151,10 @@ export default {
                     'classes/updateClass',
                     this.inputData
                 )
+                this.snackbar('Kelas berhasil diubah', 'success', 3000)
             } else {
                 await this.$store.dispatch('classes/addClass', this.inputData)
+                this.snackbar('Kelas berhasil ditambahkan', 'success', 3000)
             }
             this.reset()
         },

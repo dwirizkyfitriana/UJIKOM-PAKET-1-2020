@@ -153,11 +153,13 @@ export default {
                     'years/updateSchoolYear',
                     this.inputData
                 )
+                this.snackbar('Tahun Ajaran berhasil diubah', 'success', 3000)
             } else {
                 await this.$store.dispatch(
                     'years/addSchoolYear',
                     this.inputData
                 )
+                this.snackbar('Tahun Ajaran berhasil ditambah', 'success', 3000)
             }
             this.reset()
         },

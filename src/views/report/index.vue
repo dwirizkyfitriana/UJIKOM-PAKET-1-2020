@@ -66,8 +66,9 @@ export default {
         this.loading = false
     },
     methods: {
-        downloadPdf: function() {
-            this.generatePdf()
+        downloadPdf: async function() {
+            await this.generatePdf()
+            this.snackbar('Laporan berhasil diunduh', 'success', 3000)
         },
         generatePdf: function() {
             const doc = new jsPDF()
