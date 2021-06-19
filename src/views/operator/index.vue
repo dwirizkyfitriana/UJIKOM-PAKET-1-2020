@@ -172,7 +172,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 import { mapGetters } from 'vuex'
 import LoadingPage from '../../components/LoadingPage'
 

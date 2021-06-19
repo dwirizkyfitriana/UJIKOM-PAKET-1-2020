@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app class="blue-grey lighten-5">
         <Navigation v-if="$route.path != '/login'" />
         <v-main class="blue-grey lighten-5">
             <router-view class="blue-grey lighten-5" />

@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { Parse } from '../../services/parseConfig'
 
 const getInitialState = () => {
