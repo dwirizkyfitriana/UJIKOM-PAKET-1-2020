@@ -20,18 +20,18 @@ Vue.use(Vuex)
 Vue.use(VueSweetalert2)
 
 // dayjs
-Vue.filter('date', function (value) {
-  if (!value) return ''
-  return dayjs(value).format('DD MMM YYYY')
+Vue.filter('date', function(value) {
+    if (!value) return ''
+    return dayjs(value).format('DD MMM YYYY')
 })
-Vue.filter('datetime', function (value) {
-  if (!value) return ''
-  return dayjs(value).format('DD MMM YYYY HH:mm:ss')
+Vue.filter('datetime', function(value) {
+    if (!value) return ''
+    return dayjs(value).format('DD MMM YYYY HH:mm:ss')
 })
 
 new Vue({
-  vuetify,
-  router,
-  store,
-  render: h => h(App)
+    vuetify,
+    router,
+    store,
+    render: (h) => h(App),
 }).$mount('#app')

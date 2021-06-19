@@ -13,13 +13,13 @@ import transactions from './modules/transactionStore'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules: {
-    auth: auth,
-    operators: operators,
-    students: students,
-    majors: majors,
-    classes: classes,
-    years: years,
-    transactions: transactions,
-  },
+    modules: {
+        auth: auth,
+        operators: operators,
+        students: students,
+        majors: majors,
+        classes: classes,
+        years: years,
+        transactions: transactions,
+    },
 })
