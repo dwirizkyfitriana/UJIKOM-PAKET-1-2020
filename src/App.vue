@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <Navigation v-if="$route.path != '/login'" />
+        <Navigation v-if="$route.path != '/login' && $route.name != 'Not Found'" />
         <v-main class="blue-grey lighten-5">
             <snackbar></snackbar>
             <router-view class="blue-grey lighten-5" />
@@ -20,7 +20,7 @@ export default {
     },
     data: () => ({
         //
-    }),
+    })
 }
 </script>
 
