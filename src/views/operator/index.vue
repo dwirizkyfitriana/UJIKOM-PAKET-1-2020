@@ -262,11 +262,7 @@ export default {
                         'operators/deleteOperator',
                         objectId
                     )
-                    this.$swal(
-                        'Berhasil',
-                        'Petugas Berhasil dihapus',
-                        'success'
-                    )
+                    this.snackbar('Petugas Berhasil dihapus', 'success', 3000)
                 },
             })
         },

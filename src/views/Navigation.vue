@@ -139,7 +139,6 @@ export default {
     methods: {
         async logout() {
             await this.$store.dispatch('auth/logout')
-            this.$swal('Keluar', 'Anda Berhasil Logout.', 'success')
             this.$router.push('/login')
         },
     },

@@ -165,7 +165,7 @@ export default {
                 showLoaderOnConfirm: true,
                 preConfirm: async () => {
                     await this.$store.dispatch('classes/deleteClass', objectId)
-                    this.$swal('Berhasil', 'Kelas berhasil dihapus', 'success')
+                    this.snackbar('Kelas berhasil dihapus', 'success', 3000)
                 },
             })
         },

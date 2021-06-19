@@ -337,7 +337,7 @@ export default {
                         'students/deleteStudent',
                         objectId
                     )
-                    this.$swal('Berhasil', 'Siswa berhasil dihapus', 'success')
+                    this.snackbar('Siswa Berhasil dihapus', 'success', 3000)
                 },
             })
         },
@@ -349,13 +349,3 @@ export default {
     },
 }
 </script>
-
-<style>
-.inputNumber input[type='number'] {
-    -moz-appearance: textfield;
-}
-.inputNumber input::-webkit-outer-spin-button,
-.inputNumber input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-</style>

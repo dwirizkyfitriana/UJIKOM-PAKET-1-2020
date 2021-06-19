@@ -73,7 +73,6 @@ export default {
         },
     },
     async mounted() {
-        // let objectId = localStorage.getItem('userId')
         let objectId = 'QAfhFCn2WL'
         // get student
         await this.$store.dispatch('students/fetchStudentById', objectId)
@@ -87,61 +86,5 @@ export default {
 
         this.loading = false
     },
-    methods: {
-        openDialog: async function(type = 'new', data) {
-            this.dialog = true
-            if (type == 'update') {
-                this.update = true
-                for (const key in this.inputData) {
-                    this.inputData[key] = data[key]
-                }
-            }
-        },
-        save: async function() {
-            if (this.update) {
-                await this.$store.dispatch(
-                    'student/updateStudent',
-                    this.inputData
-                )
-            } else {
-                await this.$store.dispatch(
-                    'students/addStudent',
-                    this.inputData
-                )
-            }
-            this.reset()
-        },
-        deleteData: async function(objectId) {
-            this.$swal({
-                title: 'Apakah Anda yakin ingin menghapus?',
-                showCancelButton: true,
-                cancelButtonText: 'Tidak',
-                confirmButtonText: 'Ya',
-                showLoaderOnConfirm: true,
-                preConfirm: async () => {
-                    await this.$store.dispatch(
-                        'students/deleteStudent',
-                        objectId
-                    )
-                    this.$swal('Berhasil', 'Siswa berhasil dihapus', 'success')
-                },
-            })
-        },
-        reset() {
-            this.$refs.form.reset()
-            this.dialog = false
-            this.update = false
-        },
-    },
 }
 </script>
-
-<style>
-.inputNumber input[type='number'] {
-    -moz-appearance: textfield;
-}
-.inputNumber input::-webkit-outer-spin-button,
-.inputNumber input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-</style>

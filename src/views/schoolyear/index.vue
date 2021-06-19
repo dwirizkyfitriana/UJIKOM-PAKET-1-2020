@@ -173,11 +173,7 @@ export default {
                         'years/deleteSchoolYears',
                         objectId
                     )
-                    this.$swal(
-                        'Berhasil',
-                        'Tahun Ajaran Berhasil dihapus',
-                        'success'
-                    )
+                    this.snackbar('Tahun Ajaran Berhasil dihapus', 'success', 3000)
                 },
             })
         },
@@ -189,13 +185,3 @@ export default {
     },
 }
 </script>
-
-<style>
-.inputNumber input[type='number'] {
-    -moz-appearance: textfield;
-}
-.inputNumber input::-webkit-outer-spin-button,
-.inputNumber input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-</style>

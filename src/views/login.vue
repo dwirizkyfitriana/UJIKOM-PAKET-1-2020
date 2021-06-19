@@ -104,7 +104,7 @@ export default {
         async login() {
             if (this.$refs.form.validate()) {
                 await this.$store.dispatch('auth/login', this.inputs)
-                this.$swal('Berhasil', 'Anda Berhasil Login', 'success')
+                this.snackbar('Selamat Datang', 'success', 3000)
                 this.$router.push('/dashboard')
             }
         },

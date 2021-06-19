@@ -156,11 +156,7 @@ export default {
                 showLoaderOnConfirm: true,
                 preConfirm: async () => {
                     await this.$store.dispatch('majors/deleteMajor', objectId)
-                    this.$swal(
-                        'Berhasil',
-                        'Kompetensi Keahlian berhasil dihapus',
-                        'success'
-                    )
+                    this.snackbar('Kompetensi Keahlian berhasil dihapus', 'success', 3000)
                 },
             })
         },

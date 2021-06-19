@@ -8,6 +8,7 @@ import store from './store'
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import dayjs from 'dayjs'
+import globalMixins from './mixins/mixins'
 
 Vue.config.productionTip = false
 
@@ -29,6 +30,8 @@ Vue.filter('datetime', function(value) {
     if (!value) return ''
     return dayjs(value).format('DD MMM YYYY HH:mm:ss')
 })
+
+Vue.mixin(globalMixins)
 
 new Vue({
     vuetify,
