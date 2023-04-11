@@ -1,5 +1,11 @@
 # parse-vue-spp-app
 
+## User Demo
+```
+username: adminspp
+password: 12345678
+```
+
 ## Project setup
 ```
 npm install
